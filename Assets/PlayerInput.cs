@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
@@ -8,6 +9,8 @@ public class PlayerInput : MonoBehaviour
     private Vector2 targetPosition;
     private bool selectionState;
     private float timer;
+    private PlayerDummy playerDummy;
+    public event Action<float> AttackTargetSelected;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,13 +45,14 @@ public class PlayerInput : MonoBehaviour
             timer = 0.1f;
         }
 
-        if (Input.GetKey(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             if (!selectionState)
             {
                 Collider2D col = Physics2D.OverlapPoint(transform.position);
                 if (col != null)
                 {
+                    playerDummy = col.gameObject.GetComponent<PlayerDummy>();
                     startingPosition = transform.position;
                     selectionState = true;
                     Debug.Log("Entering Selection State");
@@ -56,10 +60,17 @@ public class PlayerInput : MonoBehaviour
             }
             else
             {
-                Debug.Log("Hello");
-                targetPosition = transform.position;
-                Debug.DrawRay(startingPosition, (targetPosition - startingPosition), Color.white, 10f);
-                selectionState = false;
+                Collider2D col = Physics2D.OverlapPoint(transform.position);
+                if (col != null)
+                {
+                    Debug.Log("Hello");
+                    //targetPosition = transform.position;
+                    //Debug.DrawRay(startingPosition, (targetPosition - startingPosition), Color.white, 10f);
+                    //enemy.applyDamage(playerDummy);
+                    float enemyAttackStat = col.gameObject.GetComponent<TestDummy>().attackStat;
+                    AttackTargetSelected?.Invoke(enemyAttackStat);
+                    selectionState = false;
+                }
             }
         }
     }
