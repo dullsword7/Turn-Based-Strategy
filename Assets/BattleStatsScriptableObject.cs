@@ -7,4 +7,5 @@ public class BattleStatsScriptableObject : ScriptableObject
 {
     public float healthStat;
     public float attackStat;
+    public float movementStat;
 }

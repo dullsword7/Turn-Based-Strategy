@@ -5,11 +5,14 @@ using UnityEngine;
 public class PlayerDummy : MonoBehaviour, IBattleUnit
 {
     [SerializeField] private PlayerInput playerInput;
-    public BattleStatsScriptableObject playerDummyStats;
+    [SerializeField] private BattleStatsScriptableObject unitBattleStats;
+    [SerializeField] private GameObject validTile;
+    [SerializeField] private GameObject movementRangeHolder;
+
     public float healthStat;
     public float attackStat;
+    public float movementStat;
 
-    public BattleStatsScriptableObject UnitBattleStats { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
     public void DealDamage(float damageDealt)
     {
@@ -17,21 +20,49 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
         Debug.Log("Dealing: " + damageDealt);
     }
 
+    public void ToggleMovementRangeVisibility()
+    {
+        Debug.Log(movementStat);
+        if (movementRangeHolder.activeInHierarchy)
+        {
+            movementRangeHolder.SetActive(false);
+        }
+        else
+        {
+            movementRangeHolder.SetActive(true);
+        }
+    }
+
+    public void InitializeMovementRange(Vector3 startPosition)
+    {
+        startPosition = new Vector3(startPosition.x, startPosition.y, 0);
+        HashSet<Vector3> validPositions = initializeValidPositions(startPosition);
+        calculateValidMovementPositions(1, validPositions);
+        foreach (Vector3 position in validPositions)
+        {
+            Instantiate(validTile, position, Quaternion.identity, movementRangeHolder.transform);
+        }
+    }
+    
     public void InitalizeBattleStats()
     {
-        throw new System.NotImplementedException();
+        healthStat = unitBattleStats.healthStat;
+        attackStat = unitBattleStats.attackStat;
+        movementStat = unitBattleStats.movementStat;
     }
 
     public void Start()
     {
-        healthStat = playerDummyStats.healthStat;
-        attackStat = playerDummyStats.attackStat;
+        InitalizeBattleStats();
+        InitializeMovementRange(transform.position);
+        movementRangeHolder.SetActive(false);
     }
     private void Awake()
     {
         if (playerInput != null)
         {
             playerInput.AttackTargetSelected += DealDamage;
+            playerInput.PlayerUnitSelected += ToggleMovementRangeVisibility;
         }
     }
     private void OnDestroy()
@@ -39,6 +70,37 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
         if (playerInput != null)
         {
             playerInput.AttackTargetSelected -= DealDamage;
+            playerInput.PlayerUnitSelected -= ToggleMovementRangeVisibility;
         }
+    }
+
+    private HashSet<Vector3> initializeValidPositions(Vector3 startingPosition)
+    {
+        HashSet<Vector3> res = new HashSet<Vector3>();
+        res.Add(startingPosition + Vector3.up);
+        res.Add(startingPosition + Vector3.down);
+        res.Add(startingPosition + Vector3.left);
+        res.Add(startingPosition + Vector3.right);
+        return res;
+    }
+    public void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
+    {
+        HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
+        if (counter == movementStat)
+        {
+            return;
+        }
+        else
+        {
+            foreach (Vector3 position in validPositions)
+            {
+                newValidPositions.Add(position + Vector3.up);
+                newValidPositions.Add(position + Vector3.down);
+                newValidPositions.Add(position + Vector3.left);
+                newValidPositions.Add(position + Vector3.right);
+            }
+            validPositions.UnionWith(newValidPositions);
+            calculateValidMovementPositions(counter + 1, validPositions);
+        } 
     }
 }
