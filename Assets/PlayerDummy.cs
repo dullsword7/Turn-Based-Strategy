@@ -12,6 +12,7 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
     public float healthStat;
     public float attackStat;
     public float movementStat;
+    public HashSet<Vector3> validPositions;
 
 
     public void DealDamage(float damageDealt)
@@ -22,7 +23,6 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
 
     public void ToggleMovementRangeVisibility()
     {
-        Debug.Log(movementStat);
         if (movementRangeHolder.activeInHierarchy)
         {
             movementRangeHolder.SetActive(false);
@@ -36,7 +36,7 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
     public void InitializeMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
-        HashSet<Vector3> validPositions = initializeValidPositions(startPosition);
+        validPositions = initializeValidPositions(startPosition);
         calculateValidMovementPositions(1, validPositions);
         foreach (Vector3 position in validPositions)
         {
@@ -77,6 +77,7 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
     private HashSet<Vector3> initializeValidPositions(Vector3 startingPosition)
     {
         HashSet<Vector3> res = new HashSet<Vector3>();
+        res.Add(startingPosition);
         res.Add(startingPosition + Vector3.up);
         res.Add(startingPosition + Vector3.down);
         res.Add(startingPosition + Vector3.left);
