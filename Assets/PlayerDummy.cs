@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using System;
 
 public class PlayerDummy : MonoBehaviour, IBattleUnit
 {
@@ -8,6 +10,8 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
     [SerializeField] private BattleStatsScriptableObject unitBattleStats;
     [SerializeField] private GameObject validTile;
     [SerializeField] private GameObject movementRangeHolder;
+    [SerializeField] private GameObject unitBattleStatsCanvas;
+    [SerializeField] private TextMeshProUGUI unitBattleStatsText;
 
     public float healthStat;
     public float attackStat;
@@ -26,10 +30,12 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
         if (movementRangeHolder.activeInHierarchy)
         {
             movementRangeHolder.SetActive(false);
+            unitBattleStatsCanvas.SetActive(false);
         }
         else
         {
             movementRangeHolder.SetActive(true);
+            unitBattleStatsCanvas.SetActive(true);
         }
     }
 
@@ -49,6 +55,9 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
         healthStat = unitBattleStats.healthStat;
         attackStat = unitBattleStats.attackStat;
         movementStat = unitBattleStats.movementStat;
+
+        string battleStatsString = $"Health: {healthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
+        unitBattleStatsText.SetText(battleStatsString);
     }
 
     public void Start()
