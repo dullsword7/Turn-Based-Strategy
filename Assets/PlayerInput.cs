@@ -5,15 +5,17 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    private bool selectionState;
+    public bool selectUnitActionState;
+    public event Action<float> AttackTargetSelected;
+    public event Action PlayerUnitSelected;
+
+    private bool selectUnitState;
     private bool hoverState;
     private float timer;
     private float timeoutLength;
     private PlayerDummy playerDummy;
     private Vector3 playerDummyOriginalPosition;
 
-    public event Action<float> AttackTargetSelected;
-    public event Action<bool> PlayerUnitSelected;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,35 +38,41 @@ public class PlayerInput : MonoBehaviour
     }
     private void HandlePlayerMovement()
     {
+        if (selectUnitActionState) return;
+
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             transform.Translate(Vector2.up);
             CheckValidPosition(Vector2.up);
+            if (selectUnitState) return;
             HoverOverUnit();
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             transform.Translate(Vector2.left);
             CheckValidPosition(Vector2.left);
+            if (selectUnitState) return;
             HoverOverUnit();
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             transform.Translate(Vector2.down);
             CheckValidPosition(Vector2.down);
+            if (selectUnitState) return;
             HoverOverUnit();
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             transform.Translate(Vector2.right);
             CheckValidPosition(Vector2.right);
+            if (selectUnitState) return;
             HoverOverUnit();
         }
     }
 
     private void CheckValidPosition(Vector2 direction)
     {
-        if (!selectionState || playerDummy == null) return;
+        if (!selectUnitState || playerDummy == null) return;
 
         // Add (0, 0, 1) because cursor is has z position of -1, while all valid positions have z position of 0
         if (playerDummy.validPositions.Contains(transform.position + new Vector3(0, 0, 1))) return;
@@ -76,28 +84,28 @@ public class PlayerInput : MonoBehaviour
         Collider2D col = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask("Player Unit"));
         if (col != null && !hoverState)
         {
-            PlayerUnitSelected?.Invoke(selectionState);
+            PlayerUnitSelected?.Invoke();
             playerDummy = col.gameObject.GetComponent<PlayerDummy>();
             playerDummyOriginalPosition = transform.position;
             hoverState = true;
         }
         if (col == null && hoverState)
         {
-            PlayerUnitSelected?.Invoke(selectionState);
+            PlayerUnitSelected?.Invoke();
             hoverState = false;
         }
     }
     private void HandleUnitSelection()
     {
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z) && !selectUnitActionState)
         {
-            if (!selectionState)
+            if (!selectUnitState)
             {
                 Collider2D col = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask("Player Unit"));
                 if (col != null)
                 {
-                    selectionState = true;
-                    PlayerUnitSelected?.Invoke(selectionState);
+                    selectUnitState = true;
+                    selectUnitActionState = true;
                     playerDummy = col.gameObject.GetComponent<PlayerDummy>();
                     playerDummyOriginalPosition = transform.position;
                     Debug.Log("Entering Selection State");
@@ -117,13 +125,15 @@ public class PlayerInput : MonoBehaviour
 
             }
         }
-        if (Input.GetKeyDown(KeyCode.X) && selectionState) CancelUnitSelection();
+        if (Input.GetKeyDown(KeyCode.X) && selectUnitState) CancelUnitSelection();
     }
 
     // Cancels unit selection if the x key was pressed or no valid target was selected for attack
     private void CancelUnitSelection()
     {
-        selectionState = false;
-        PlayerUnitSelected?.Invoke(selectionState);
+        selectUnitState = false;
+        selectUnitActionState = false;
+        hoverState = false;
+        PlayerUnitSelected?.Invoke();
     }
 }
