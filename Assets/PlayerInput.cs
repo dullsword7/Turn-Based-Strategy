@@ -6,13 +6,14 @@ using UnityEngine;
 public class PlayerInput : MonoBehaviour
 {
     private bool selectionState;
+    private bool hoverState;
     private float timer;
     private float timeoutLength;
     private PlayerDummy playerDummy;
     private Vector3 playerDummyOriginalPosition;
 
     public event Action<float> AttackTargetSelected;
-    public event Action PlayerUnitSelected;
+    public event Action<bool> PlayerUnitSelected;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,21 +40,25 @@ public class PlayerInput : MonoBehaviour
         {
             transform.Translate(Vector2.up);
             CheckValidPosition(Vector2.up);
+            HoverOverUnit();
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             transform.Translate(Vector2.left);
             CheckValidPosition(Vector2.left);
+            HoverOverUnit();
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
             transform.Translate(Vector2.down);
             CheckValidPosition(Vector2.down);
+            HoverOverUnit();
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             transform.Translate(Vector2.right);
             CheckValidPosition(Vector2.right);
+            HoverOverUnit();
         }
     }
 
@@ -66,7 +71,22 @@ public class PlayerInput : MonoBehaviour
 
         transform.Translate(direction * -1);
     }
-
+    private void HoverOverUnit()
+    {
+        Collider2D col = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask("Player Unit"));
+        if (col != null && !hoverState)
+        {
+            PlayerUnitSelected?.Invoke(selectionState);
+            playerDummy = col.gameObject.GetComponent<PlayerDummy>();
+            playerDummyOriginalPosition = transform.position;
+            hoverState = true;
+        }
+        if (col == null && hoverState)
+        {
+            PlayerUnitSelected?.Invoke(selectionState);
+            hoverState = false;
+        }
+    }
     private void HandleUnitSelection()
     {
         if (Input.GetKeyDown(KeyCode.Z))
@@ -76,10 +96,10 @@ public class PlayerInput : MonoBehaviour
                 Collider2D col = Physics2D.OverlapPoint(transform.position, LayerMask.GetMask("Player Unit"));
                 if (col != null)
                 {
-                    PlayerUnitSelected?.Invoke();
+                    selectionState = true;
+                    PlayerUnitSelected?.Invoke(selectionState);
                     playerDummy = col.gameObject.GetComponent<PlayerDummy>();
                     playerDummyOriginalPosition = transform.position;
-                    selectionState = true;
                     Debug.Log("Entering Selection State");
                 }
             }
@@ -104,6 +124,6 @@ public class PlayerInput : MonoBehaviour
     private void CancelUnitSelection()
     {
         selectionState = false;
-        PlayerUnitSelected?.Invoke();
+        PlayerUnitSelected?.Invoke(selectionState);
     }
 }

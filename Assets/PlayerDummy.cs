@@ -25,10 +25,11 @@ public class PlayerDummy : MonoBehaviour, IBattleUnit
         Debug.Log("Dealing: " + damageDealt);
     }
 
-    public void ToggleMovementRangeVisibility()
+    public void ToggleMovementRangeVisibility(bool selectionState)
     {
         if (movementRangeHolder.activeInHierarchy)
         {
+            if (selectionState) return;
             movementRangeHolder.SetActive(false);
             unitBattleStatsCanvas.SetActive(false);
         }
