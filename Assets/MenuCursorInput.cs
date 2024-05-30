@@ -24,7 +24,7 @@ public class MenuCursorInput : MonoBehaviour
         }
         else
         {
-            HandleMenuCursorInput();
+            //HandleMenuCursorInput();
             timer = timeoutLength;
         }
 

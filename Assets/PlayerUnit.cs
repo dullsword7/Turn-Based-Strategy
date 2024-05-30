@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using System;
 
-public class PlayerDummy : MonoBehaviour, IBattleUnit
+public class PlayerUnit : MonoBehaviour, IBattleUnit
 {
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private BattleStatsScriptableObject unitBattleStats;

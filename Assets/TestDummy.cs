@@ -12,7 +12,7 @@ public class TestDummy : MonoBehaviour
         healthStat = testDummyStats.healthStat;
         attackStat = testDummyStats.attackStat;
     }
-    public void applyDamage(PlayerDummy playerDummy)
+    public void applyDamage(PlayerUnit playerDummy)
     {
         healthStat -= playerDummy.attackStat; 
     }

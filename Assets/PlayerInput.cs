@@ -13,7 +13,7 @@ public class PlayerInput : MonoBehaviour
     private bool hoverState;
     private float timer;
     private float timeoutLength;
-    private PlayerDummy playerDummy;
+    private PlayerUnit playerUnit;
     private Vector3 playerDummyOriginalPosition;
 
     // Start is called before the first frame update
@@ -72,10 +72,10 @@ public class PlayerInput : MonoBehaviour
 
     private void CheckValidPosition(Vector2 direction)
     {
-        if (!selectUnitState || playerDummy == null) return;
+        if (!selectUnitState || playerUnit == null) return;
 
         // Add (0, 0, 1) because cursor is has z position of -1, while all valid positions have z position of 0
-        if (playerDummy.validPositions.Contains(transform.position + new Vector3(0, 0, 1))) return;
+        if (playerUnit.validPositions.Contains(transform.position + new Vector3(0, 0, 1))) return;
 
         transform.Translate(direction * -1);
     }
@@ -85,7 +85,7 @@ public class PlayerInput : MonoBehaviour
         if (col != null && !hoverState)
         {
             PlayerUnitSelected?.Invoke();
-            playerDummy = col.gameObject.GetComponent<PlayerDummy>();
+            playerUnit = col.gameObject.GetComponent<PlayerUnit>();
             playerDummyOriginalPosition = transform.position;
             hoverState = true;
         }
@@ -106,7 +106,7 @@ public class PlayerInput : MonoBehaviour
                 {
                     selectUnitState = true;
                     selectUnitActionState = true;
-                    playerDummy = col.gameObject.GetComponent<PlayerDummy>();
+                    playerUnit = col.gameObject.GetComponent<PlayerUnit>();
                     playerDummyOriginalPosition = transform.position;
                     Debug.Log("Entering Selection State");
                 }
