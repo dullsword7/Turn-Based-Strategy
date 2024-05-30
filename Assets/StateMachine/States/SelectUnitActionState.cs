@@ -7,13 +7,14 @@ public class SelectUnitActionState : IState
     private PlayerController player;
     private PlayerUnit selectedPlayerUnit;
     private int currentMenuButtonIndex;
+    private bool onCoolDown;
     private float timer;
     private float timeoutLength;
     private Transform selectUnitActionCursor;
     public SelectUnitActionState(PlayerController player)
     {
         this.player = player;
-        timeoutLength = 0.1f;
+        timeoutLength = 0.2f;
         selectUnitActionCursor = player.SelectUnitActionCursor.transform;
     }
     public void Enter()
@@ -30,7 +31,6 @@ public class SelectUnitActionState : IState
         else
         {
             HandleMenuCursorInput();
-            timer = timeoutLength;
         }
 
     }
@@ -41,13 +41,17 @@ public class SelectUnitActionState : IState
     }
     private void HandleMenuCursorInput()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
             NextMenuButton();
+            Debug.Log(player.UnitActionMenuButtons[currentMenuButtonIndex]);
+            timer = timeoutLength;
         }
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.DownArrow))
         {
             PreviousMenuButton();
+            Debug.Log(player.UnitActionMenuButtons[currentMenuButtonIndex]);
+            timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.X))
         {

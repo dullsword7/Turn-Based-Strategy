@@ -35,7 +35,6 @@ public class ViewMapState : IState
         else
         {
             HandlePlayerMovement();
-            timer = timeoutLength;
         }
         HandleUnitSelection();
     }
@@ -51,21 +50,25 @@ public class ViewMapState : IState
         {
             player.transform.Translate(Vector2.up);
             HoverOverUnit();
+            timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             player.transform.Translate(Vector2.left);
             HoverOverUnit();
+            timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
             player.transform.Translate(Vector2.down);
             HoverOverUnit();
+            timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             player.transform.Translate(Vector2.right);
             HoverOverUnit();
+            timer = timeoutLength;
         }
     }
     private void CheckValidPosition(Vector2 direction)
