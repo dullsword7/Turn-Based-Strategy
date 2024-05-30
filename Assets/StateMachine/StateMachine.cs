@@ -7,11 +7,13 @@ public class StateMachine
 
     public ViewMapState viewMapState;
     public SelectUnitActionState selectUnitActionState;
+    public SelectAttackTargetState selectAttackTargetState;
 
     public StateMachine(PlayerController player)
     {
         this.viewMapState = new ViewMapState(player);
         this.selectUnitActionState = new SelectUnitActionState(player);
+        this.selectAttackTargetState = new SelectAttackTargetState(player);
     }
     public void Initialize(IState startingState)
     {

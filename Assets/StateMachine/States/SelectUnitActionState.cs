@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectUnitActionState : IState
 {
@@ -16,6 +17,7 @@ public class SelectUnitActionState : IState
         this.player = player;
         timeoutLength = 0.2f;
         selectUnitActionCursor = player.SelectUnitActionCursor.transform;
+        InitializeButtonEvents();
     }
     public void Enter()
     {
@@ -44,16 +46,19 @@ public class SelectUnitActionState : IState
         if (Input.GetKey(KeyCode.UpArrow))
         {
             NextMenuButton();
-            Debug.Log(player.UnitActionMenuButtons[currentMenuButtonIndex]);
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
             PreviousMenuButton();
-            Debug.Log(player.UnitActionMenuButtons[currentMenuButtonIndex]);
             timer = timeoutLength;
         }
-        if (Input.GetKey(KeyCode.X))
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Button>().onClick.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.X))
         {
             player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
         }
@@ -62,7 +67,7 @@ public class SelectUnitActionState : IState
     private void NextMenuButton()
     {
         currentMenuButtonIndex += 1;
-        if (currentMenuButtonIndex >= player.UnitActionMenuButtons.Length) currentMenuButtonIndex = 0;
+        if (currentMenuButtonIndex >= player.UnitActionMenuButtons.Count) currentMenuButtonIndex = 0;
         Vector3 buttonPosition = player.UnitActionMenuButtons[currentMenuButtonIndex].transform.position;
         selectUnitActionCursor.position = new Vector3(selectUnitActionCursor.position.x, buttonPosition.y, selectUnitActionCursor.position.z);
     }
@@ -70,8 +75,35 @@ public class SelectUnitActionState : IState
     private void PreviousMenuButton()
     {
         currentMenuButtonIndex -= 1;
-        if (currentMenuButtonIndex < 0) currentMenuButtonIndex = player.UnitActionMenuButtons.Length - 1;
+        if (currentMenuButtonIndex < 0) currentMenuButtonIndex = player.UnitActionMenuButtons.Count - 1;
         Vector3 buttonPosition = player.UnitActionMenuButtons[currentMenuButtonIndex].transform.position;
         selectUnitActionCursor.position = new Vector3(selectUnitActionCursor.position.x, buttonPosition.y, selectUnitActionCursor.position.z);
+    }
+
+    private void InitializeButtonEvents()
+    {
+        foreach (GameObject go in player.UnitActionMenuButtons)
+        {
+            SetupButtonEventListeners(go);
+        }
+    }
+    private void SetupButtonEventListeners(GameObject go)
+    {
+        if (go.name == "Attack Button")
+        { 
+            go.GetComponent<Button>().onClick.AddListener(OnAttackButtonClicked);
+        }
+        else if (go.name == "End Turn Button")
+        {
+            go.GetComponent<Button>().onClick.AddListener(OnEndTurnButtonClicked);
+        }
+    }
+    private void OnAttackButtonClicked() 
+    {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectAttackTargetState);
+    }
+    private void OnEndTurnButtonClicked()
+    {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
     }
 }

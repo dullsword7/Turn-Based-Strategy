@@ -18,7 +18,6 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     public float movementStat;
     public HashSet<Vector3> validPositions;
 
-
     public void DealDamage(float damageDealt)
     {
         healthStat -= damageDealt;

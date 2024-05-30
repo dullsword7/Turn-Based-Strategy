@@ -6,15 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private PlayerUnit playerUnit;
     [SerializeField] private GameObject selectUnitActionCursor;
     [SerializeField] private GameObject unitActionMenu;
-    [SerializeField] private GameObject[] unitActionMenuButtons;
+    [SerializeField] private List<GameObject> unitActionMenuButtons;
 
     private StateMachine playerStateMachine;
+
+    public PlayerUnit PlayerUnit;
     public StateMachine PlayerStateMachine => playerStateMachine;
     public GameObject SelectUnitActionCursor => selectUnitActionCursor;
-    public GameObject[] UnitActionMenuButtons => unitActionMenuButtons;
+    public List<GameObject> UnitActionMenuButtons => unitActionMenuButtons;
     public GameObject UnitActionMenu => unitActionMenu;
     private void Awake()
     {
