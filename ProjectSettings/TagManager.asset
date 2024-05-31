@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Units
+    uniqueID: 816875845
+    locked: 0
+  - name: Movement Range
+    uniqueID: 1894624999
+    locked: 0
+  - name: Cursor
+    uniqueID: 2167313493
+    locked: 0
+  - name: Animations
+    uniqueID: 4055774099
+    locked: 0

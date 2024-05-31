@@ -67,14 +67,19 @@ public class SelectAttackTargetState : IState
     {
         if (player.PlayerUnit == null) return;
 
-        // Add (0, 0, 1) because cursor is has z position of -1, while all valid positions have z position of 0
-        if (player.PlayerUnit.validPositions.Contains(player.transform.position + new Vector3(0, 0, 1))) return;
+        if (player.PlayerUnit.validPositions.Contains(player.transform.position)) return;
 
         player.transform.Translate(direction * -1);
     }
     private void AttackTargetSelected()
     {
-
+        Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Enemy Unit"));
+        if (col != null)
+        {
+            col.GetComponent<TestDummy>().RecieveDamage(player.PlayerUnit.attackStat);
+            SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+        }
     }
 }
 
