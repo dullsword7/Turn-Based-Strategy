@@ -40,7 +40,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
 
     public void InitializeMovementRange(Vector3 startPosition)
     {
-        startPosition = new Vector3(startPosition.x, startPosition.y, -1);
+        startPosition = new Vector3(startPosition.x, startPosition.y, 0);
         validPositions = initializeValidPositions(startPosition);
         calculateValidMovementPositions(1, validPositions);
         foreach (Vector3 position in validPositions)

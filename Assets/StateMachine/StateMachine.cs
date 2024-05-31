@@ -4,6 +4,7 @@ using System;
 public class StateMachine
 {
     public IState CurrentState { get; private set; }
+    public IState PreviousState { get; private set; }
 
     public ViewMapState viewMapState;
     public SelectUnitActionState selectUnitActionState;
@@ -24,6 +25,7 @@ public class StateMachine
     public void TransitionTo(IState nextState)
     {
         CurrentState.Exit();
+        PreviousState = CurrentState;
         CurrentState = nextState;
         nextState.Enter();
     }

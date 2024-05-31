@@ -20,6 +20,11 @@ public class ViewMapState : IState
     public void Enter()
     {
         Debug.Log("Entering ViewMapState");
+        if (player.PlayerStateMachine.PreviousState == player.PlayerStateMachine.selectAttackTargetState)
+        {
+            hoverState = false;
+            playerUnit.ToggleMovementRangeVisibility();
+        }
     }
     public void Update()
     {

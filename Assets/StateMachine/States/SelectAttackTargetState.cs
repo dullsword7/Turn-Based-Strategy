@@ -8,6 +8,8 @@ public class SelectAttackTargetState : IState
 
     private float timer;
     private float timeoutLength;
+    private bool hoverState;
+    private TestDummy enemyUnit;
     public SelectAttackTargetState(PlayerController player)
     {
         this.player = player;
@@ -33,7 +35,8 @@ public class SelectAttackTargetState : IState
     }
     public void Exit()
     {
-
+        enemyUnit.ToggleInfoVisibility();
+        hoverState = false;
     }
 
     private void HandlePlayerMovement()
@@ -42,24 +45,28 @@ public class SelectAttackTargetState : IState
         {
             player.transform.Translate(Vector2.up);
             CheckValidPosition(Vector2.up);
+            HoverOverUnit();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             player.transform.Translate(Vector2.left);
             CheckValidPosition(Vector2.left);
+            HoverOverUnit();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
             player.transform.Translate(Vector2.down);
             CheckValidPosition(Vector2.down);
+            HoverOverUnit();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             player.transform.Translate(Vector2.right);
             CheckValidPosition(Vector2.right);
+            HoverOverUnit();
             timer = timeoutLength;
         }
     }
@@ -79,6 +86,22 @@ public class SelectAttackTargetState : IState
             col.GetComponent<TestDummy>().RecieveDamage(player.PlayerUnit.attackStat);
             SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
             player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+        }
+    }
+    private void HoverOverUnit()
+    {
+        Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Enemy Unit"));
+
+        if (col != null && !hoverState)
+        {
+            enemyUnit = col.gameObject.GetComponent<TestDummy>();
+            enemyUnit.ToggleInfoVisibility();
+            hoverState = true;
+        }
+        if (col == null && hoverState)
+        {
+            enemyUnit.ToggleInfoVisibility();
+            hoverState = false;
         }
     }
 }
