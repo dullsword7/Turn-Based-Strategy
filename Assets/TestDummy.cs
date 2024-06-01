@@ -11,6 +11,7 @@ public class TestDummy : MonoBehaviour, IBattleUnit
 
     public BattleStatsScriptableObject testDummyStats;
     public float healthStat;
+    public float maxHealthStat;
     public float attackStat;
     public void Start()
     {
@@ -24,9 +25,10 @@ public class TestDummy : MonoBehaviour, IBattleUnit
     public void InitalizeBattleStats()
     {
         healthStat = testDummyStats.healthStat;
+        maxHealthStat = healthStat;
         attackStat = testDummyStats.attackStat;
 
-        string battleStatsString = $"Health: {healthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
+        string battleStatsString = $"Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public void RecieveDamage(float damageAmount)
@@ -36,7 +38,7 @@ public class TestDummy : MonoBehaviour, IBattleUnit
     }
     public void UpdateStats()
     {
-        string battleStatsString = $"Health: {healthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
+        string battleStatsString = $"Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public void ToggleInfoVisibility()

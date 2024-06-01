@@ -14,6 +14,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     [SerializeField] private TextMeshProUGUI unitBattleStatsText;
 
     public float healthStat;
+    public float maxHealthStat;
     public float attackStat;
     public float movementStat;
     public HashSet<Vector3> validPositions;
@@ -52,10 +53,11 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     public void InitalizeBattleStats()
     {
         healthStat = unitBattleStats.healthStat;
+        maxHealthStat = healthStat;
         attackStat = unitBattleStats.attackStat;
         movementStat = unitBattleStats.movementStat;
 
-        string battleStatsString = $"Health: {healthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
+        string battleStatsString = $"Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
 
