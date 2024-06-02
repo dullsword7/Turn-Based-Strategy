@@ -40,6 +40,8 @@ public class SelectUnitActionState : IState
     {
         Debug.Log("Exiting SelectUnitActionState");
         player.UnitActionMenu.SetActive(false);
+
+        player.PlayerStateMachine.PreviousState = this;
     }
     private void HandleMenuCursorInput()
     {

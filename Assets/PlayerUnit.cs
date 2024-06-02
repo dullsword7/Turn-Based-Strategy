@@ -24,19 +24,16 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         healthStat -= damageDealt;
         Debug.Log("Dealing: " + damageDealt);
     }
-
-    public void ToggleMovementRangeVisibility()
+    
+    public void TurnOffInfo()
     {
-        if (movementRangeHolder.activeInHierarchy)
-        {
-            movementRangeHolder.SetActive(false);
-            unitBattleStatsCanvas.SetActive(false);
-        }
-        else
-        {
-            movementRangeHolder.SetActive(true);
-            unitBattleStatsCanvas.SetActive(true);
-        }
+        movementRangeHolder.SetActive(false);
+        unitBattleStatsCanvas.SetActive(false);
+    }
+    public void TurnOnInfo()
+    {
+        movementRangeHolder.SetActive(true);
+        unitBattleStatsCanvas.SetActive(true);
     }
 
     public void InitializeMovementRange(Vector3 startPosition)
@@ -72,7 +69,6 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         if (playerInput != null)
         {
             playerInput.AttackTargetSelected += DealDamage;
-            playerInput.PlayerUnitSelected += ToggleMovementRangeVisibility;
         }
     }
     private void OnDestroy()
@@ -80,7 +76,6 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         if (playerInput != null)
         {
             playerInput.AttackTargetSelected -= DealDamage;
-            playerInput.PlayerUnitSelected -= ToggleMovementRangeVisibility;
         }
     }
 

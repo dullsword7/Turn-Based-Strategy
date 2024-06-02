@@ -20,10 +20,13 @@ public class ViewMapState : IState
     public void Enter()
     {
         Debug.Log("Entering ViewMapState");
-        if (player.PlayerStateMachine.PreviousState == player.PlayerStateMachine.selectAttackTargetState)
+        if (player.PlayerStateMachine.PreviousState == player.PlayerStateMachine.selectUnitActionState)
+        {
+            hoverState = true;
+        }
+        else
         {
             hoverState = false;
-            playerUnit.ToggleMovementRangeVisibility();
         }
     }
     public void Update()
@@ -41,6 +44,8 @@ public class ViewMapState : IState
     public void Exit()
     {
         Debug.Log("Exiting ViewMapState");
+
+        player.PlayerStateMachine.PreviousState = this;
     }
     private void HandlePlayerMovement()
     {
@@ -77,12 +82,12 @@ public class ViewMapState : IState
         {
             playerUnit = col.gameObject.GetComponent<PlayerUnit>();
             player.PlayerUnit = playerUnit;
-            playerUnit.ToggleMovementRangeVisibility();
+            playerUnit.TurnOnInfo();
             hoverState = true;
         }
         if (col == null && hoverState)
         {
-            playerUnit.ToggleMovementRangeVisibility();
+            playerUnit.TurnOffInfo();
             hoverState = false;
         }
     }

@@ -4,17 +4,19 @@ using System;
 public class StateMachine
 {
     public IState CurrentState { get; private set; }
-    public IState PreviousState { get; private set; }
+    public IState PreviousState { get; set; }
 
     public ViewMapState viewMapState;
     public SelectUnitActionState selectUnitActionState;
     public SelectAttackTargetState selectAttackTargetState;
+    public AttackSuccessfulState attackSuccessfulState;
 
     public StateMachine(PlayerController player)
     {
         this.viewMapState = new ViewMapState(player);
         this.selectUnitActionState = new SelectUnitActionState(player);
         this.selectAttackTargetState = new SelectAttackTargetState(player);
+        this.attackSuccessfulState = new AttackSuccessfulState(player);
     }
     public void Initialize(IState startingState)
     {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class SelectAttackTargetState : IState
 {
@@ -10,14 +11,19 @@ public class SelectAttackTargetState : IState
     private float timeoutLength;
     private bool hoverState;
     private TestDummy enemyUnit;
+    private bool lockControls;
+    private Action waitForHealthBars;
     public SelectAttackTargetState(PlayerController player)
     {
         this.player = player;
         timeoutLength = 0.2f;
+        waitForHealthBars += HealthBarsFinishedUpdating;
     }
     public void Enter()
     {
         Debug.Log("Entering SelectAttackTargetState");
+        hoverState = false;
+        lockControls = false;
     }
     public void Update ()
     {
@@ -27,16 +33,21 @@ public class SelectAttackTargetState : IState
         }
         else
         {
+            if (lockControls) return;
             HandlePlayerMovement();
         }
 
+        if (lockControls) return;
         if (Input.GetKeyDown(KeyCode.X)) player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUnitActionState);
         if (Input.GetKeyDown(KeyCode.Z)) AttackTargetSelected();
     }
     public void Exit()
     {
-        enemyUnit.ToggleInfoVisibility();
+        enemyUnit?.TurnOffInfo();
         hoverState = false;
+        lockControls = false;
+
+        player.PlayerStateMachine.PreviousState = this;
     }
 
     private void HandlePlayerMovement()
@@ -83,9 +94,11 @@ public class SelectAttackTargetState : IState
         Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Enemy Unit"));
         if (col != null)
         {
-            col.GetComponent<TestDummy>().RecieveDamage(player.PlayerUnit.attackStat);
             SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
-            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+            TestDummy enemy = col.GetComponent<TestDummy>();
+            lockControls = true;
+            player.PlayerUnit.TurnOffInfo();
+            enemy.StartCoroutine(enemy.RecieveDamge(player.PlayerUnit.attackStat, waitForHealthBars));
         }
     }
     private void HoverOverUnit()
@@ -95,14 +108,19 @@ public class SelectAttackTargetState : IState
         if (col != null && !hoverState)
         {
             enemyUnit = col.gameObject.GetComponent<TestDummy>();
-            enemyUnit.ToggleInfoVisibility();
+            enemyUnit.TurnOnInfo();
             hoverState = true;
         }
         if (col == null && hoverState)
         {
-            enemyUnit.ToggleInfoVisibility();
+            enemyUnit.TurnOffInfo();
             hoverState = false;
         }
+    }
+
+    private void HealthBarsFinishedUpdating()
+    {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.attackSuccessfulState); 
     }
 }
 
