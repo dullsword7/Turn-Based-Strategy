@@ -26,6 +26,8 @@ public class ViewMapState : IState
         }
         else
         {
+            player.PlayerUnit?.TurnOffMovementRange();
+            player.PlayerUnit?.TurnOffInfo();
             hoverState = false;
         }
     }
@@ -82,11 +84,13 @@ public class ViewMapState : IState
         {
             playerUnit = col.gameObject.GetComponent<PlayerUnit>();
             player.PlayerUnit = playerUnit;
+            playerUnit.TurnOnMovementRange();
             playerUnit.TurnOnInfo();
             hoverState = true;
         }
         if (col == null && hoverState)
         {
+            playerUnit.TurnOffMovementRange();
             playerUnit.TurnOffInfo();
             hoverState = false;
         }

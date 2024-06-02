@@ -97,6 +97,7 @@ public class SelectAttackTargetState : IState
             SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
             EnemyUnit enemy = col.GetComponent<EnemyUnit>();
             lockControls = true;
+            player.PlayerUnit.TurnOffMovementRange();
             player.PlayerUnit.TurnOffInfo();
             enemy.StartCoroutine(enemy.RecieveDamge(player.PlayerUnit.attackStat, waitForHealthBars));
         }

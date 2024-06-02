@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private GameObject selectUnitActionCursor;
     [SerializeField] private GameObject unitActionMenu;
     [SerializeField] private List<GameObject> unitActionMenuButtons;
+    //[SerializeField] private List<GameObject> enemyUnitList;
+    [SerializeField] private List<EnemyUnit> enemyUnitList;
 
     private StateMachine playerStateMachine;
 
     public PlayerUnit PlayerUnit;
     public StateMachine PlayerStateMachine => playerStateMachine;
     public GameObject SelectUnitActionCursor => selectUnitActionCursor;
-    public List<GameObject> UnitActionMenuButtons => unitActionMenuButtons;
     public GameObject UnitActionMenu => unitActionMenu;
+    public List<GameObject> UnitActionMenuButtons => unitActionMenuButtons;
+    //public List<GameObject> EnemyUnitList => enemyUnitList;
+    public List<EnemyUnit> EnemyUnitList => enemyUnitList;
     private void Awake()
     {
         playerStateMachine = new StateMachine(this);
+        //enemyUnitList = GameObject.FindGameObjectsWithTag("Enemy").ToList();
     }
     // Start is called before the first frame update
     void Start()

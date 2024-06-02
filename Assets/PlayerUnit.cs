@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 public class PlayerUnit : MonoBehaviour, IBattleUnit
 {
@@ -10,14 +11,17 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     [SerializeField] private BattleStatsScriptableObject unitBattleStats;
     [SerializeField] private GameObject validTile;
     [SerializeField] private GameObject movementRangeHolder;
-    [SerializeField] private GameObject unitBattleStatsCanvas;
+    [SerializeField] private GameObject unitBattleStatsHolder;
     [SerializeField] private TextMeshProUGUI unitBattleStatsText;
+    [SerializeField] private Image healthBar;
+    [SerializeField] private GameObject healthBarHolder;
 
     public float healthStat;
     public float maxHealthStat;
     public float attackStat;
     public float movementStat;
     public HashSet<Vector3> validPositions;
+    public Action PlayerUnitDeath;
 
     public void DealDamage(float damageDealt)
     {
@@ -25,15 +29,23 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         Debug.Log("Dealing: " + damageDealt);
     }
     
-    public void TurnOffInfo()
+    public void TurnOnMovementRange()
+    {
+        movementRangeHolder.SetActive(true);
+    }
+    public void TurnOffMovementRange()
     {
         movementRangeHolder.SetActive(false);
-        unitBattleStatsCanvas.SetActive(false);
+    }
+    public void TurnOffInfo()
+    {
+        unitBattleStatsHolder.SetActive(false);
+        healthBarHolder.SetActive(false);
     }
     public void TurnOnInfo()
     {
-        movementRangeHolder.SetActive(true);
-        unitBattleStatsCanvas.SetActive(true);
+        unitBattleStatsHolder.SetActive(true);
+        healthBarHolder.SetActive(true);
     }
 
     public void InitializeMovementRange(Vector3 startPosition)
@@ -55,6 +67,35 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         movementStat = unitBattleStats.movementStat;
 
         string battleStatsString = $"Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
+        unitBattleStatsText.SetText(battleStatsString);
+    }
+    public IEnumerator RecieveDamge(float damageAmount, Action onComplete = null)
+    {
+        float healthBeforeDamage = healthStat;
+        float healthAfterDamage = healthStat - damageAmount;
+        healthStat -= damageAmount;
+        if (healthAfterDamage <= 0)
+        {
+            healthStat = 0;
+            healthAfterDamage = 0;
+        }
+
+        while (healthBeforeDamage > healthAfterDamage)
+        {
+            healthBeforeDamage -= 1;
+            UpdateStats(healthBeforeDamage);
+            healthBar.fillAmount = healthBeforeDamage / maxHealthStat;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        Debug.Log("Finished Updating Healthbar");
+        yield return new WaitForSeconds(2f);
+        onComplete?.Invoke();
+        if (healthStat <= 0) PlayerUnitDeath?.Invoke();
+    }
+    public void UpdateStats(float currentHealth)
+    {
+        string battleStatsString = $"Health: {currentHealth} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
 
@@ -92,7 +133,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     public void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
     {
         HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
-        if (counter == movementStat)
+        if (counter >= movementStat)
         {
             return;
         }

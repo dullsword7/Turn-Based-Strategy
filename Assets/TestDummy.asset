@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: TestDummy
   m_EditorClassIdentifier: 
   healthStat: 200
-  attackStat: 5
+  attackStat: 80
+  movementStat: 3

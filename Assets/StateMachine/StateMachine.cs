@@ -10,6 +10,7 @@ public class StateMachine
     public SelectUnitActionState selectUnitActionState;
     public SelectAttackTargetState selectAttackTargetState;
     public AttackSuccessfulState attackSuccessfulState;
+    public EnemyBattlePhaseState enemyBattlePhaseState;
 
     public StateMachine(PlayerController player)
     {
@@ -17,6 +18,7 @@ public class StateMachine
         this.selectUnitActionState = new SelectUnitActionState(player);
         this.selectAttackTargetState = new SelectAttackTargetState(player);
         this.attackSuccessfulState = new AttackSuccessfulState(player);
+        this.enemyBattlePhaseState = new EnemyBattlePhaseState(player);
     }
     public void Initialize(IState startingState)
     {
