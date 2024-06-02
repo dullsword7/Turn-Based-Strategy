@@ -5,7 +5,7 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 
-public class TestDummy : MonoBehaviour, IBattleUnit
+public class EnemyUnit : MonoBehaviour, IBattleUnit
 {
     [SerializeField] TextMeshProUGUI unitBattleStatsText;
     [SerializeField] GameObject unitBattleStatsCanvas;
@@ -43,13 +43,6 @@ public class TestDummy : MonoBehaviour, IBattleUnit
     {
         unitBattleStatsCanvas.SetActive(false);
     }
-    public void RecieveDamage(float damageAmount)
-    {
-        float healthBeforeDamage = healthStat;
-        float healthAfterDamage = healthStat - damageAmount;
-        healthStat -= damageAmount;
-        UpdateHealthBar(healthBeforeDamage, healthAfterDamage);
-    }
     public IEnumerator RecieveDamge(float damageAmount, Action onComplete = null)
     {
         float healthBeforeDamage = healthStat;
@@ -73,22 +66,4 @@ public class TestDummy : MonoBehaviour, IBattleUnit
         string battleStatsString = $"Health: {currentHealth} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
-    public void UpdateHealthBar(float healthBeforeDamage, float healthAfterDamage)
-    {
-        StartCoroutine(UpdateHealthBarImage(healthBeforeDamage, healthAfterDamage));
-    }
-    public IEnumerator UpdateHealthBarImage(float healthBeforeDamage, float healthAfterDamage)
-    {
-        yield return null;
-    }
-    //public IEnumerator UpdateHealthBarImage(Action<int> callback)
-    //{
-    //    Debug.Log("Hello");
-    //    yield return new WaitForSeconds(5f);
-    //    callback(1);
-    //}
-    //public void applyDamage(PlayerUnit playerDummy)
-    //{
-    //    healthStat -= playerDummy.attackStat; 
-    //}
 }

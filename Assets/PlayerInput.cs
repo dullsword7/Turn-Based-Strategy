@@ -118,7 +118,7 @@ public class PlayerInput : MonoBehaviour
                 if (col != null)
                 {
                     Debug.Log("Hello");
-                    float enemyAttackStat = col.gameObject.GetComponent<TestDummy>().attackStat;
+                    float enemyAttackStat = col.gameObject.GetComponent<EnemyUnit>().attackStat;
                     AttackTargetSelected?.Invoke(enemyAttackStat);
                 }
                 CancelUnitSelection();

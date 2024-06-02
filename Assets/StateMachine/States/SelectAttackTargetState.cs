@@ -10,7 +10,7 @@ public class SelectAttackTargetState : IState
     private float timer;
     private float timeoutLength;
     private bool hoverState;
-    private TestDummy enemyUnit;
+    private EnemyUnit enemyUnit;
     private bool lockControls;
     private Action waitForHealthBars;
     public SelectAttackTargetState(PlayerController player)
@@ -95,7 +95,7 @@ public class SelectAttackTargetState : IState
         if (col != null)
         {
             SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
-            TestDummy enemy = col.GetComponent<TestDummy>();
+            EnemyUnit enemy = col.GetComponent<EnemyUnit>();
             lockControls = true;
             player.PlayerUnit.TurnOffInfo();
             enemy.StartCoroutine(enemy.RecieveDamge(player.PlayerUnit.attackStat, waitForHealthBars));
@@ -107,7 +107,7 @@ public class SelectAttackTargetState : IState
 
         if (col != null && !hoverState)
         {
-            enemyUnit = col.gameObject.GetComponent<TestDummy>();
+            enemyUnit = col.gameObject.GetComponent<EnemyUnit>();
             enemyUnit.TurnOnInfo();
             hoverState = true;
         }
