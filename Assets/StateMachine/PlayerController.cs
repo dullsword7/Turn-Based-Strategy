@@ -10,22 +10,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject selectUnitActionCursor;
     [SerializeField] private GameObject unitActionMenu;
     [SerializeField] private List<GameObject> unitActionMenuButtons;
-    //[SerializeField] private List<GameObject> enemyUnitList;
-    [SerializeField] private List<EnemyUnit> enemyUnitList;
+    [SerializeField] private GameObject playerToEnemyTurnTransition;
+    [SerializeField] private GameObject enemyToPlayerTurnTransition;
 
     private StateMachine playerStateMachine;
+    private List<GameObject> enemyUnitList;
 
     public PlayerUnit PlayerUnit;
     public StateMachine PlayerStateMachine => playerStateMachine;
     public GameObject SelectUnitActionCursor => selectUnitActionCursor;
     public GameObject UnitActionMenu => unitActionMenu;
     public List<GameObject> UnitActionMenuButtons => unitActionMenuButtons;
-    //public List<GameObject> EnemyUnitList => enemyUnitList;
-    public List<EnemyUnit> EnemyUnitList => enemyUnitList;
+    public List<GameObject> EnemyUnitList => enemyUnitList;
+    public GameObject PlayerToEnemyTurnTransition => playerToEnemyTurnTransition;
+    public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
+    private void DoSomething() { }
     private void Awake()
     {
         playerStateMachine = new StateMachine(this);
-        //enemyUnitList = GameObject.FindGameObjectsWithTag("Enemy").ToList();
+        enemyUnitList = GameObject.FindGameObjectsWithTag("Enemy").ToList();
+        PlayerUnit.PlayerUnitDeath += DoSomething;
+        
     }
     // Start is called before the first frame update
     void Start()

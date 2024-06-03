@@ -19,12 +19,13 @@ public class EnemyBattlePhaseState : IState
         Debug.Log("Entering Enemy Battle Phase State");
         // if all enemies are dead or if player is dead, return
 
-        foreach (EnemyUnit enemy in player.EnemyUnitList)
+        foreach (GameObject enemy in player.EnemyUnitList)
         {
-            if (enemy.IsPlayerUnitInRange(player.PlayerUnit))
+            EnemyUnit enemyUnit = enemy.GetComponent<EnemyUnit>();
+            if (enemyUnit.IsPlayerUnitInRange(player.PlayerUnit))
             {
                 Debug.Log("Attacking player unit");
-                AttackTarget(enemy.attackStat);
+                AttackTarget(enemyUnit.attackStat);
             }
             // do enemy behavior
         }
@@ -47,7 +48,7 @@ public class EnemyBattlePhaseState : IState
     }
     private void HealthBarsFinishedUpdating()
     {
-        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState); 
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState); 
     }
 
 }

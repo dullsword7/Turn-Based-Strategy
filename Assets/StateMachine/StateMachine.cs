@@ -11,6 +11,8 @@ public class StateMachine
     public SelectAttackTargetState selectAttackTargetState;
     public AttackSuccessfulState attackSuccessfulState;
     public EnemyBattlePhaseState enemyBattlePhaseState;
+    public PlayerToEnemyTurnState playerToEnemyTurnState;
+    public EnemyToPlayerTurnState enemyToPlayerTurnState;
 
     public StateMachine(PlayerController player)
     {
@@ -19,6 +21,8 @@ public class StateMachine
         this.selectAttackTargetState = new SelectAttackTargetState(player);
         this.attackSuccessfulState = new AttackSuccessfulState(player);
         this.enemyBattlePhaseState = new EnemyBattlePhaseState(player);
+        this.playerToEnemyTurnState = new PlayerToEnemyTurnState(player);
+        this.enemyToPlayerTurnState = new EnemyToPlayerTurnState(player);
     }
     public void Initialize(IState startingState)
     {
