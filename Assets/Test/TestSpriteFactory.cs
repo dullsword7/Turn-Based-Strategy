@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpriteFactory : MonoBehaviour
+public class TestSpriteFactory : MonoBehaviour
 {
-    public static SpriteFactory Instance;
+    public static TestSpriteFactory Instance;
 
 
     GameObject attackAnimation;
@@ -22,10 +22,11 @@ public class SpriteFactory : MonoBehaviour
 
         if (spriteName == "Attack")
         {
-            var x = Instantiate(attackAnimation, position, Quaternion.AngleAxis(angle, Vector3.forward));
+            var x = Instantiate(attackAnimation, position, Quaternion.identity);
         }
         if (spriteName == "Slash")
         {
+            Debug.Log(direction);
             var x = Instantiate(slashAnimation, position, Quaternion.AngleAxis(angle, Vector3.forward));
         }
     }

@@ -43,9 +43,9 @@ public class EnemyBattlePhaseState : IState
     {
         player.PlayerUnit.TurnOffMovementRange();
         player.PlayerUnit.TurnOnInfo();
-        Debug.Log("Attack Player at: " + player.PlayerUnit.transform.position);
         enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position, () => {
-            SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position);
+            Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
+            SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
             player.PlayerUnit.StartCoroutine(player.PlayerUnit.RecieveDamge(damage, waitForHealthBars));
         }));
     }

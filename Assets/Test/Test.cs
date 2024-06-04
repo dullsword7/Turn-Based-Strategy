@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
+    public GameObject target;
+    private Vector3 direction;
     // Start is called before the first frame update
     void Start()
     {
-        
+        direction = target.transform.position - transform.position; 
     }
 
     // Update is called once per frame
@@ -15,7 +17,7 @@ public class Test : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            StartCoroutine(SmoothLerp(3f));
+            TestSpriteFactory.Instance.InstantiateSkillSprite("Slash", target.transform.position, direction);
         }
     }
     private IEnumerator SmoothLerp (float time)
