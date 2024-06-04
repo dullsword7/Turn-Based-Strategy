@@ -94,12 +94,14 @@ public class SelectAttackTargetState : IState
         Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Enemy Unit"));
         if (col != null)
         {
-            SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
             EnemyUnit enemy = col.GetComponent<EnemyUnit>();
             lockControls = true;
             player.PlayerUnit.TurnOffMovementRange();
             player.PlayerUnit.TurnOffInfo();
-            enemy.StartCoroutine(enemy.RecieveDamge(player.PlayerUnit.attackStat, waitForHealthBars));
+            player.PlayerUnit.StartCoroutine(player.PlayerUnit.MoveToPosition(enemy.transform.position, () => {
+                enemy.StartCoroutine(enemy.RecieveDamge(player.PlayerUnit.attackStat, waitForHealthBars));
+                SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position);
+            }));
         }
     }
     private void HoverOverUnit()

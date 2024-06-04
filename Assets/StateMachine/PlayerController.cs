@@ -24,12 +24,12 @@ public class PlayerController : MonoBehaviour
     public List<GameObject> EnemyUnitList => enemyUnitList;
     public GameObject PlayerToEnemyTurnTransition => playerToEnemyTurnTransition;
     public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
-    private void DoSomething() { }
+    //private void DoSomething() { }
     private void Awake()
     {
         playerStateMachine = new StateMachine(this);
         enemyUnitList = GameObject.FindGameObjectsWithTag("Enemy").ToList();
-        PlayerUnit.PlayerUnitDeath += DoSomething;
+        //PlayerUnit.PlayerUnitDeath += DoSomething;
         
     }
     // Start is called before the first frame update

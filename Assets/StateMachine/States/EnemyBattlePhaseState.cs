@@ -25,7 +25,7 @@ public class EnemyBattlePhaseState : IState
             if (enemyUnit.IsPlayerUnitInRange(player.PlayerUnit))
             {
                 Debug.Log("Attacking player unit");
-                AttackTarget(enemyUnit.attackStat);
+                AttackTarget(enemyUnit, enemyUnit.attackStat);
             }
             // do enemy behavior
         }
@@ -39,12 +39,15 @@ public class EnemyBattlePhaseState : IState
     public void Update()
     {
     }
-    private void AttackTarget(float damage)
+    private void AttackTarget(EnemyUnit enemyUnit, float damage)
     {
         player.PlayerUnit.TurnOffMovementRange();
         player.PlayerUnit.TurnOnInfo();
-        SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position);
-        player.PlayerUnit.StartCoroutine(player.PlayerUnit.RecieveDamge(damage, waitForHealthBars));
+        Debug.Log("Attack Player at: " + player.PlayerUnit.transform.position);
+        enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position, () => {
+            SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position);
+            player.PlayerUnit.StartCoroutine(player.PlayerUnit.RecieveDamge(damage, waitForHealthBars));
+        }));
     }
     private void HealthBarsFinishedUpdating()
     {
