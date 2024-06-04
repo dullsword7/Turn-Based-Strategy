@@ -66,7 +66,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         attackStat = unitBattleStats.attackStat;
         movementStat = unitBattleStats.movementStat;
 
-        string battleStatsString = $"Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
+        string battleStatsString = $"Player {Environment.NewLine} Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public IEnumerator RecieveDamge(float damageAmount, Action onComplete = null)
@@ -95,7 +95,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     }
     public void UpdateStats(float currentHealth)
     {
-        string battleStatsString = $"Health: {currentHealth} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
+        string battleStatsString = $"Player {Environment.NewLine} Health: {currentHealth} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
 
@@ -179,8 +179,8 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
          
         float elapsedTime = 0;
 
-        float xTimer = Math.Abs(direction.x);
-        float yTimer = Math.Abs(direction.y);
+        float xTimer = Math.Abs(direction.x) / 2;
+        float yTimer = Math.Abs(direction.y) / 2;
         // move horizontally first
         while (elapsedTime < xTimer)
         {
