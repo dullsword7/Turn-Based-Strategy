@@ -47,7 +47,7 @@ public class EnemyBattlePhaseState : IState
             enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream", () => {
                 Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
                 SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-                player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, waitForHealthBars));
+                player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, player.PlayerUnit, waitForHealthBars));
             }));
         }));
     }

@@ -12,7 +12,7 @@ public class PlayerUnit : BattleUnit
     [SerializeField] private GameObject validTile;
     [SerializeField] private GameObject movementRangeHolder;
     [SerializeField] private GameObject unitBattleStatsHolder;
-    [SerializeField] private TextMeshProUGUI unitBattleStatsText;
+    [SerializeField] private TMP_Text unitBattleStatsText;
     [SerializeField] private Image healthBar;
     [SerializeField] private GameObject healthBarHolder;
 
@@ -21,12 +21,18 @@ public class PlayerUnit : BattleUnit
     public float maxHealthStat;
     public float attackStat;
     public float movementStat;
-    public Action PlayerUnitDeath;
+    public Action BattleUnitDeath;
 
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
     public HashSet<Vector3> validPositions;
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
+    public override Image HealthBar { get => healthBar; set => healthBar = value; }
+    public override float MaxHealthStat { get => maxHealthStat; set => maxHealthStat = value; }
+    public override float HealthStat { get => healthStat; set => healthStat = value; }
+    public override float AttackStat { get => attackStat; set => attackStat = value; }
+    public override float MovementStat { get => movementStat; set => movementStat = value; }
+    public override TMP_Text UnitBattleStatsText { get => unitBattleStatsText; set => unitBattleStatsText = value; }
     public void DealDamage(float damageDealt)
     {
         healthStat -= damageDealt;
@@ -62,36 +68,6 @@ public class PlayerUnit : BattleUnit
         string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
-    public override IEnumerator ReceiveDamage(float damageAmount, Action onComplete = null)
-    {
-        float healthBeforeDamage = healthStat;
-        float healthAfterDamage = healthStat - damageAmount;
-        healthStat -= damageAmount;
-        if (healthAfterDamage <= 0)
-        {
-            healthStat = 0;
-            healthAfterDamage = 0;
-        }
-
-        while (healthBeforeDamage > healthAfterDamage)
-        {
-            healthBeforeDamage -= 1;
-            UpdateStats(healthBeforeDamage);
-            healthBar.fillAmount = healthBeforeDamage / maxHealthStat;
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        Debug.Log("Finished Updating Healthbar");
-        yield return new WaitForSeconds(2f);
-        onComplete?.Invoke();
-        if (healthStat <= 0) PlayerUnitDeath?.Invoke();
-    }
-    public void UpdateStats(float currentHealth)
-    {
-        string battleStatsString = $"Player {Environment.NewLine} HP: {currentHealth} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
-        unitBattleStatsText.SetText(battleStatsString);
-    }
-
     public void Start()
     {
         InitalizeBattleStats();

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class EnemyUnit : BattleUnit
 {
-    [SerializeField] private TextMeshProUGUI unitBattleStatsText;
+    [SerializeField] private TMP_Text unitBattleStatsText;
     [SerializeField] private GameObject unitBattleStatsHolder;
     [SerializeField] private GameObject healthBarHolder;
     [SerializeField] private Image healthBar;
@@ -24,7 +24,12 @@ public class EnemyUnit : BattleUnit
 
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
-
+    public override Image HealthBar { get => healthBar; set => healthBar = value; }
+    public override float MaxHealthStat { get => maxHealthStat; set => maxHealthStat = value; }
+    public override float HealthStat { get => healthStat; set => healthStat = value; }
+    public override float AttackStat { get => attackStat; set => attackStat = value; }
+    public override float MovementStat { get => movementStat; set => movementStat = value; }
+    public override TMP_Text UnitBattleStatsText { get => unitBattleStatsText; set => unitBattleStatsText = value; }
     public void Start()
     {
         InitalizeBattleStats();
@@ -38,34 +43,6 @@ public class EnemyUnit : BattleUnit
         movementStat = testDummyStats.movementStat;
 
         string battleStatsString = $"Enemy {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
-        unitBattleStatsText.SetText(battleStatsString);
-    }
-    public override IEnumerator ReceiveDamage(float damageAmount, Action onComplete = null)
-    {
-        float healthBeforeDamage = healthStat;
-        float healthAfterDamage = healthStat - damageAmount;
-        healthStat -= damageAmount;
-        if (healthAfterDamage <= 0)
-        {
-            healthStat = 0;
-            healthAfterDamage = 0;
-        }
-
-        while (healthBeforeDamage > healthAfterDamage)
-        {
-            healthBeforeDamage -= 1;
-            UpdateStats(healthBeforeDamage);
-            healthBar.fillAmount = healthBeforeDamage / maxHealthStat;
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        Debug.Log("Finished Updating Healthbar");
-        yield return new WaitForSeconds(2f);
-        onComplete?.Invoke();
-    }
-    public void UpdateStats(float currentHealth)
-    {
-        string battleStatsString = $"Enemy {Environment.NewLine} HP: {currentHealth} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public bool IsPlayerUnitInRange(PlayerUnit player)

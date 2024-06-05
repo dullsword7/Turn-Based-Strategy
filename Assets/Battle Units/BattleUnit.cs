@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 {
@@ -9,10 +11,19 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     private int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
     private int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
 
+    public Action PlayerUnitDeath;
     public abstract GameObject UnitBattleStatsHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract HashSet<Vector3> ValidPositions { get; set; }
+    public abstract Image HealthBar { get; set; }
+    public abstract float MaxHealthStat { get; set; }
+    public abstract float HealthStat { get; set; }
+    public abstract float AttackStat { get; set; }
+    public abstract float MovementStat { get; set; }
+    public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract void InitalizeBattleStats();
+
+    // TODO ideally this will return the position closest to the attacking unit
     public virtual Vector3 ValidAttackPositions(Vector3 attackTargetPosition)
     {
         List<Vector3> attackPositions = new List<Vector3>();
@@ -114,5 +125,40 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         UnitBattleStatsHolder.SetActive(true);
         HealthBarHolder.SetActive(true);
     }
-    public abstract IEnumerator ReceiveDamage(float damageAmount, Action onComplete);
+    public virtual IEnumerator ReceiveDamage(float damageAmount, BattleUnit battleUnit, Action onComplete = null)
+    {
+        float healthBeforeDamage = HealthStat;
+        float healthAfterDamage = HealthStat - damageAmount;
+        HealthStat -= damageAmount;
+        if (healthAfterDamage <= 0)
+        {
+            HealthStat = 0;
+            healthAfterDamage = 0;
+        }
+
+        while (healthBeforeDamage > healthAfterDamage)
+        {
+            healthBeforeDamage -= 1;
+            UpdateStats(healthBeforeDamage, battleUnit);
+            HealthBar.fillAmount = healthBeforeDamage / MaxHealthStat;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        Debug.Log("Finished Updating Healthbar");
+        yield return new WaitForSeconds(2f);
+        onComplete?.Invoke();
+    }
+    public void UpdateStats(float currentHealth, BattleUnit battleUnit)
+    {
+        string battleStatsString = "No Stats Found";
+        if (battleUnit is PlayerUnit)
+        {
+            battleStatsString = $"Player {Environment.NewLine} HP: {currentHealth} / {MaxHealthStat} {Environment.NewLine} ATK: {AttackStat} {Environment.NewLine} MOV: {MovementStat}";
+        }
+        if (battleUnit is EnemyUnit)
+        {
+            battleStatsString = $"Enemy {Environment.NewLine} HP: {currentHealth} / {MaxHealthStat} {Environment.NewLine} ATK: {AttackStat} {Environment.NewLine} MOV: {MovementStat}";
+        }
+        UnitBattleStatsText.SetText(battleStatsString);
+    }
 }

@@ -101,7 +101,7 @@ public class SelectAttackTargetState : IState
             player.PlayerUnit.StartCoroutine(player.PlayerUnit.MoveToPosition(enemy.transform.position, () => {
                 player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream", () => {
                     Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
-                    enemy.StartCoroutine(enemy.ReceiveDamage(player.PlayerUnit.attackStat, waitForHealthBars));
+                    enemy.StartCoroutine(enemy.ReceiveDamage(player.PlayerUnit.attackStat, enemy, waitForHealthBars));
                     SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position, direction);
                 }));
             }));
