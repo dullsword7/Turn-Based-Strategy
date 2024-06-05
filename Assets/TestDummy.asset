@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f55c68190e0d73b49bc66b5944308910, type: 3}
   m_Name: TestDummy
   m_EditorClassIdentifier: 
-  healthStat: 200
-  attackStat: 80
+  healthStat: 30
+  attackStat: 5
   movementStat: 3

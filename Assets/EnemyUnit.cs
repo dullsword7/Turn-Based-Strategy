@@ -22,7 +22,9 @@ public class EnemyUnit : BattleUnit
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
     private HashSet<Vector3> validPositions;
 
-    public bool updatingHealthBar;
+    public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
+    public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
+
     public void Start()
     {
         InitalizeBattleStats();
@@ -37,16 +39,6 @@ public class EnemyUnit : BattleUnit
 
         string battleStatsString = $"Enemy {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
-    }
-    public void TurnOnInfo()
-    {
-        unitBattleStatsHolder.SetActive(true); 
-        healthBarHolder.SetActive(true); 
-    }
-    public void TurnOffInfo()
-    {
-        unitBattleStatsHolder.SetActive(false);
-        healthBarHolder.SetActive(false); 
     }
     public override IEnumerator ReceiveDamage(float damageAmount, Action onComplete = null)
     {

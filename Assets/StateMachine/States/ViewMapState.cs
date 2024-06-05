@@ -12,10 +12,16 @@ public class ViewMapState : IState
     private bool hoverState;
     private float timer;
     private float timeoutLength;
+
+    private LayerMask layerMask;
+    BattleUnit battleUnit;
     public ViewMapState(PlayerController player)
     {
         this.player = player;
         timeoutLength = 0.2f;
+        
+        // allows raycast to target both "Player Unit" layer and "Enemy Unit" layer
+        layerMask = (1 << LayerMask.NameToLayer("Player Unit") | 1 << LayerMask.NameToLayer("Enemy Unit"));
     }
     public void Enter()
     {
@@ -78,20 +84,31 @@ public class ViewMapState : IState
     }
     private void HoverOverUnit()
     {
-        Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Player Unit"));
-
+        Collider2D col = Physics2D.OverlapPoint(player.transform.position, layerMask);
         if (col != null && !hoverState)
         {
-            playerUnit = col.gameObject.GetComponent<PlayerUnit>();
-            player.PlayerUnit = playerUnit;
-            playerUnit.TurnOnMovementRange();
-            playerUnit.TurnOnInfo();
+            battleUnit = col.gameObject.GetComponent<BattleUnit>();
+            battleUnit.TurnOnInfo();
+
+            if (battleUnit is PlayerUnit)
+            {
+                playerUnit = col.gameObject.GetComponent<PlayerUnit>();
+                player.PlayerUnit = playerUnit;
+                playerUnit.TurnOnMovementRange();
+                playerUnit.TurnOnInfo();
+            }
             hoverState = true;
         }
         if (col == null && hoverState)
         {
-            playerUnit.TurnOffMovementRange();
-            playerUnit.TurnOffInfo();
+            battleUnit.TurnOffInfo();
+
+            if (battleUnit is PlayerUnit)
+            {
+                playerUnit.TurnOffMovementRange();
+                playerUnit.TurnOffInfo();
+            }
+
             hoverState = false;
         }
     }

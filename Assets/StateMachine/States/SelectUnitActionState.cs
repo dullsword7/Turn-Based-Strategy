@@ -41,6 +41,12 @@ public class SelectUnitActionState : IState
         Debug.Log("Exiting SelectUnitActionState");
         player.UnitActionMenu.SetActive(false);
 
+        if (player.transform.position != player.PlayerUnit.transform.position)
+        {
+            player.PlayerUnit.TurnOffMovementRange();
+        }
+
+
         player.PlayerStateMachine.PreviousState = this;
     }
     private void HandleMenuCursorInput()

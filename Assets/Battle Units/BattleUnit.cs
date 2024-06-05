@@ -5,9 +5,12 @@ using UnityEngine;
 
 public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 {
-    const string animBaseLayer = "Base Layer";
-    int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
-    int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
+    private const string animBaseLayer = "Base Layer";
+    private int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
+    private int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
+
+    public abstract GameObject UnitBattleStatsHolder { get; set; }
+    public abstract GameObject HealthBarHolder { get; set; }
     public abstract HashSet<Vector3> ValidPositions { get; set; }
     public abstract void InitalizeBattleStats();
     public virtual Vector3 ValidAttackPositions(Vector3 attackTargetPosition)
@@ -101,6 +104,15 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         onComplete?.Invoke();
 
     }
-
+    public void TurnOffInfo()
+    {
+        UnitBattleStatsHolder.SetActive(false);
+        HealthBarHolder.SetActive(false);
+    }
+    public void TurnOnInfo()
+    {
+        UnitBattleStatsHolder.SetActive(true);
+        HealthBarHolder.SetActive(true);
+    }
     public abstract IEnumerator ReceiveDamage(float damageAmount, Action onComplete);
 }

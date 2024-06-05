@@ -25,7 +25,8 @@ public class PlayerUnit : BattleUnit
 
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
     public HashSet<Vector3> validPositions;
-
+    public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
+    public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
     public void DealDamage(float damageDealt)
     {
         healthStat -= damageDealt;
@@ -40,17 +41,6 @@ public class PlayerUnit : BattleUnit
     {
         movementRangeHolder.SetActive(false);
     }
-    public void TurnOffInfo()
-    {
-        unitBattleStatsHolder.SetActive(false);
-        healthBarHolder.SetActive(false);
-    }
-    public void TurnOnInfo()
-    {
-        unitBattleStatsHolder.SetActive(true);
-        healthBarHolder.SetActive(true);
-    }
-
     public void InitializeMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
