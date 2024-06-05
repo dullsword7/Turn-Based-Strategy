@@ -8,13 +8,12 @@ public class ViewMapState : IState
     private PlayerController player;
     private PlayerUnit playerUnit;
 
-    private bool selectUnitState;
-    private bool hoverState;
     private float timer;
     private float timeoutLength;
 
     private LayerMask layerMask;
     BattleUnit battleUnit;
+    BattleUnit previousBattleUnit;
     public ViewMapState(PlayerController player)
     {
         this.player = player;
@@ -26,16 +25,8 @@ public class ViewMapState : IState
     public void Enter()
     {
         Debug.Log("Entering ViewMapState");
-        if (player.PlayerStateMachine.PreviousState == player.PlayerStateMachine.selectUnitActionState)
-        {
-            hoverState = true;
-        }
-        else
-        {
-            player.PlayerUnit?.TurnOffMovementRange();
-            player.PlayerUnit?.TurnOffInfo();
-            hoverState = false;
-        }
+        player.PlayerUnit?.TurnOffMovementRange();
+        player.PlayerUnit?.TurnOffInfo();
     }
     public void Update()
     {
@@ -85,8 +76,9 @@ public class ViewMapState : IState
     private void HoverOverUnit()
     {
         Collider2D col = Physics2D.OverlapPoint(player.transform.position, layerMask);
-        if (col != null && !hoverState)
+        if (col != null)
         {
+            TurnOffPreviousUnitInfo();
             battleUnit = col.gameObject.GetComponent<BattleUnit>();
             battleUnit.TurnOnInfo();
 
@@ -97,19 +89,17 @@ public class ViewMapState : IState
                 playerUnit.TurnOnMovementRange();
                 playerUnit.TurnOnInfo();
             }
-            hoverState = true;
+            previousBattleUnit = battleUnit;
         }
-        if (col == null && hoverState)
+        if (col == null)
         {
-            battleUnit.TurnOffInfo();
+            battleUnit?.TurnOffInfo();
 
             if (battleUnit is PlayerUnit)
             {
                 playerUnit.TurnOffMovementRange();
                 playerUnit.TurnOffInfo();
             }
-
-            hoverState = false;
         }
     }
     private void HandleUnitSelection()
@@ -122,6 +112,16 @@ public class ViewMapState : IState
                 playerUnit = col.gameObject.GetComponent<PlayerUnit>();
                 player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUnitActionState);
             }
+        }
+    }
+    // Handles the case when hovering over a unit, an adjacent unit is hovered over. 
+    private void TurnOffPreviousUnitInfo()
+    {
+        previousBattleUnit?.TurnOffInfo();
+        if (previousBattleUnit is PlayerUnit)
+        {
+            PlayerUnit playerUnit = previousBattleUnit as PlayerUnit;
+            playerUnit.TurnOffMovementRange();
         }
     }
 }

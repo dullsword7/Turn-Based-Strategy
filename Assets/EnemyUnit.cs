@@ -45,6 +45,11 @@ public class EnemyUnit : BattleUnit
         float healthBeforeDamage = healthStat;
         float healthAfterDamage = healthStat - damageAmount;
         healthStat -= damageAmount;
+        if (healthAfterDamage <= 0)
+        {
+            healthStat = 0;
+            healthAfterDamage = 0;
+        }
 
         while (healthBeforeDamage > healthAfterDamage)
         {
