@@ -5,8 +5,10 @@ using UnityEngine;
 
 public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 {
+    const string animBaseLayer = "Base Layer";
+    int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
+    int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
     public abstract HashSet<Vector3> ValidPositions { get; set; }
-
     public abstract void InitalizeBattleStats();
     public virtual Vector3 ValidAttackPositions(Vector3 attackTargetPosition)
     {
@@ -62,6 +64,42 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
         yield return new WaitForSeconds(1f);
         onComplete?.Invoke();
+    }
+    public IEnumerator StartAndWaitForAnimation(string stateName, Action onComplete = null)
+    {
+        Animator anim = GetComponent<Animator>();
+
+        //Get hash of animation
+        int animHash = 0;
+        if (stateName == "PlayerUnitScream")
+            animHash = playerUnitScream;
+        if (stateName == "EnemyUnitScream")
+            animHash = enemyUnitScream;
+
+         //targetAnim.Play(stateName);
+        anim.CrossFadeInFixedTime(stateName, 0.6f);
+
+        //Wait until we enter the current state
+        while (anim.GetCurrentAnimatorStateInfo(0).fullPathHash != animHash)
+        {
+            yield return null;
+        }
+
+        float counter = 0;
+        float waitTime = anim.GetCurrentAnimatorStateInfo(0).length;
+
+        //Now, Wait until the current state is done playing
+        while (counter < (waitTime))
+        {
+            counter += Time.deltaTime;
+            yield return null;
+        }
+
+        //Done playing. Do something below!
+        Debug.Log("Done Playing");
+        yield return new WaitForSeconds(.5f);
+        onComplete?.Invoke();
+
     }
 
     public abstract IEnumerator ReceiveDamage(float damageAmount, Action onComplete);

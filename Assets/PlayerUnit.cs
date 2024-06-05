@@ -26,8 +26,6 @@ public class PlayerUnit : BattleUnit
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
     public HashSet<Vector3> validPositions;
 
-    const string animBaseLayer = "Base Layer";
-    int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
     public void DealDamage(float damageDealt)
     {
         healthStat -= damageDealt;
@@ -154,42 +152,5 @@ public class PlayerUnit : BattleUnit
             validPositions.UnionWith(newValidPositions);
             calculateValidMovementPositions(counter + 1, validPositions);
         } 
-    }
-    public IEnumerator StartAndWaitForAnimation(string stateName, Action onComplete = null)
-    {
-        Animator anim = GetComponent<Animator>();
-
-        //Get hash of animation
-        int animHash = 0;
-        if (stateName == "PlayerUnitScream")
-            animHash = playerUnitScream;
-
-         //targetAnim.Play(stateName);
-        anim.CrossFadeInFixedTime(stateName, 0.6f);
-
-        //Wait until we enter the current state
-        while (anim.GetCurrentAnimatorStateInfo(0).fullPathHash != animHash)
-        {
-            yield return null;
-        }
-
-        float counter = 0;
-        float waitTime = anim.GetCurrentAnimatorStateInfo(0).length;
-
-        //Now, Wait until the current state is done playing
-        while (counter < (waitTime))
-        {
-            counter += Time.deltaTime;
-            yield return null;
-        }
-
-        //Done playing. Do something below!
-        Debug.Log("Done Playing");
-        yield return new WaitForSeconds(.5f);
-        onComplete?.Invoke();
-
-    }
-    public void StartAttackAnimation()
-    {
     }
 }
