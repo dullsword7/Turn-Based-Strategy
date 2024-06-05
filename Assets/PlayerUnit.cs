@@ -69,7 +69,7 @@ public class PlayerUnit : BattleUnit
         attackStat = unitBattleStats.attackStat;
         movementStat = unitBattleStats.movementStat;
 
-        string battleStatsString = $"Player {Environment.NewLine} Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
+        string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public override IEnumerator ReceiveDamage(float damageAmount, Action onComplete = null)
@@ -98,7 +98,7 @@ public class PlayerUnit : BattleUnit
     }
     public void UpdateStats(float currentHealth)
     {
-        string battleStatsString = $"Player {Environment.NewLine} Health: {currentHealth} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
+        string battleStatsString = $"Player {Environment.NewLine} HP: {currentHealth} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
 

@@ -35,7 +35,7 @@ public class EnemyUnit : BattleUnit
         attackStat = testDummyStats.attackStat;
         movementStat = testDummyStats.movementStat;
 
-        string battleStatsString = $"Enemy {Environment.NewLine} Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
+        string battleStatsString = $"Enemy {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public void TurnOnInfo()
@@ -68,7 +68,7 @@ public class EnemyUnit : BattleUnit
     }
     public void UpdateStats(float currentHealth)
     {
-        string battleStatsString = $"Enemy {Environment.NewLine} Health: {currentHealth} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine}";
+        string battleStatsString = $"Enemy {Environment.NewLine} HP: {currentHealth} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);
     }
     public bool IsPlayerUnitInRange(PlayerUnit player)
