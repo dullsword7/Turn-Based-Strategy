@@ -99,9 +99,11 @@ public class SelectAttackTargetState : IState
             player.PlayerUnit.TurnOffMovementRange();
             player.PlayerUnit.TurnOffInfo();
             player.PlayerUnit.StartCoroutine(player.PlayerUnit.MoveToPosition(enemy.transform.position, () => {
-                Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
-                enemy.StartCoroutine(enemy.RecieveDamge(player.PlayerUnit.attackStat, waitForHealthBars));
-                SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position, direction);
+                player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream", () => {
+                    Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
+                    enemy.StartCoroutine(enemy.ReceiveDamage(player.PlayerUnit.attackStat, waitForHealthBars));
+                    SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position, direction);
+                }));
             }));
         }
     }

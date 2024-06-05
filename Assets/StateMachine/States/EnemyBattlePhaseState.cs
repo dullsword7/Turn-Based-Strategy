@@ -46,7 +46,7 @@ public class EnemyBattlePhaseState : IState
         enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position, () => {
             Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
             SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-            player.PlayerUnit.StartCoroutine(player.PlayerUnit.RecieveDamge(damage, waitForHealthBars));
+            player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, waitForHealthBars));
         }));
     }
     private void HealthBarsFinishedUpdating()

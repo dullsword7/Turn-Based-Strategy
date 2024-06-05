@@ -6,6 +6,6 @@ public class DestroySprite : MonoBehaviour
 {
     public void DestroyWhenAnimationFinished()
     {
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 }

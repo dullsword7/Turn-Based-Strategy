@@ -1,7 +1,13 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 public interface IBattleUnit
 {
+    public HashSet<Vector3> ValidPositions { get; set;}
     public void InitalizeBattleStats();
-    public void DealDamage(float damageAmount) { }
-    public void RecieveDamage(float damageAmount) { }
-
+    public IEnumerator ReceiveDamage(float damageAmount, Action onComplete);
+    public Vector3 ValidAttackPositions(Vector3 attackTargetPosition);
+    public IEnumerator MoveToPosition(Vector3 attackTargetPosition, Action onComplete = null);
 }

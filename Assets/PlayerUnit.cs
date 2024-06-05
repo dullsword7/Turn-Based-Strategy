@@ -5,7 +5,7 @@ using TMPro;
 using System;
 using UnityEngine.UI;
 
-public class PlayerUnit : MonoBehaviour, IBattleUnit
+public class PlayerUnit : BattleUnit
 {
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private BattleStatsScriptableObject unitBattleStats;
@@ -16,13 +16,18 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
     [SerializeField] private Image healthBar;
     [SerializeField] private GameObject healthBarHolder;
 
+
     public float healthStat;
     public float maxHealthStat;
     public float attackStat;
     public float movementStat;
-    public HashSet<Vector3> validPositions;
     public Action PlayerUnitDeath;
 
+    public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
+    public HashSet<Vector3> validPositions;
+
+    const string animBaseLayer = "Base Layer";
+    int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
     public void DealDamage(float damageDealt)
     {
         healthStat -= damageDealt;
@@ -59,7 +64,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         }
     }
     
-    public void InitalizeBattleStats()
+    public override void InitalizeBattleStats()
     {
         healthStat = unitBattleStats.healthStat;
         maxHealthStat = healthStat;
@@ -69,7 +74,7 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
         string battleStatsString = $"Player {Environment.NewLine} Health: {healthStat} / {maxHealthStat} {Environment.NewLine} Attack: {attackStat} {Environment.NewLine} Move: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
-    public IEnumerator RecieveDamge(float damageAmount, Action onComplete = null)
+    public override IEnumerator ReceiveDamage(float damageAmount, Action onComplete = null)
     {
         float healthBeforeDamage = healthStat;
         float healthAfterDamage = healthStat - damageAmount;
@@ -150,58 +155,41 @@ public class PlayerUnit : MonoBehaviour, IBattleUnit
             calculateValidMovementPositions(counter + 1, validPositions);
         } 
     }
-    public Vector3 ValidAttackPositions(Vector3 attackTargetPosition)
+    public IEnumerator StartAndWaitForAnimation(string stateName, Action onComplete = null)
     {
-        List<Vector3> attackPositions = new List<Vector3>();
-        Vector3 pos1 = attackTargetPosition + Vector3.up;
-        Vector3 pos2 = attackTargetPosition + Vector3.down;
-        Vector3 pos3 = attackTargetPosition + Vector3.left;
-        Vector3 pos4 = attackTargetPosition + Vector3.right;
+        Animator anim = GetComponent<Animator>();
 
-        // if the attacker is already adjacent to its target, dont move
-        if (transform.position == pos1 || transform.position == pos2 || transform.position == pos3 || transform.position == pos4) return transform.position;
+        //Get hash of animation
+        int animHash = 0;
+        if (stateName == "PlayerUnitScream")
+            animHash = playerUnitScream;
 
-        if (validPositions.Contains(pos1)) attackPositions.Add(pos1);
-        if (validPositions.Contains(pos2)) attackPositions.Add(pos2);
-        if (validPositions.Contains(pos3)) attackPositions.Add(pos3);
-        if (validPositions.Contains(pos4)) attackPositions.Add(pos4);
+         //targetAnim.Play(stateName);
+        anim.CrossFadeInFixedTime(stateName, 0.6f);
 
-        if (attackPositions.Count == 0) return attackTargetPosition;
-
-        return attackPositions[0];
-    }
-    public IEnumerator MoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
-    {
-        Vector3 targetDestination = ValidAttackPositions(attackTargetPosition);
-        Vector3 direction = targetDestination - transform.position;
-        Vector3 xTargetDestination = new Vector3(targetDestination.x, transform.position.y, transform.position.z);
-        Vector3 startingPosition = transform.position;
-         
-        float elapsedTime = 0;
-
-        float xTimer = Math.Abs(direction.x) / 2;
-        float yTimer = Math.Abs(direction.y) / 2;
-        // move horizontally first
-        while (elapsedTime < xTimer)
+        //Wait until we enter the current state
+        while (anim.GetCurrentAnimatorStateInfo(0).fullPathHash != animHash)
         {
-            transform.position = Vector3.Lerp(startingPosition, xTargetDestination, (elapsedTime / xTimer));
-            elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = xTargetDestination;
-        startingPosition = transform.position;
-        elapsedTime = 0;
+        float counter = 0;
+        float waitTime = anim.GetCurrentAnimatorStateInfo(0).length;
 
-        while (elapsedTime < yTimer)
+        //Now, Wait until the current state is done playing
+        while (counter < (waitTime))
         {
-            transform.position = Vector3.Lerp(startingPosition, targetDestination, (elapsedTime / yTimer));
-            elapsedTime += Time.deltaTime;
+            counter += Time.deltaTime;
             yield return null;
         }
-        transform.position = targetDestination;
 
-        yield return new WaitForSeconds(1f);
+        //Done playing. Do something below!
+        Debug.Log("Done Playing");
+        yield return new WaitForSeconds(.5f);
         onComplete?.Invoke();
+
+    }
+    public void StartAttackAnimation()
+    {
     }
 }
