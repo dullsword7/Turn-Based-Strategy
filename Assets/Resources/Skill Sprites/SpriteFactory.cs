@@ -7,13 +7,15 @@ public class SpriteFactory : MonoBehaviour
     public static SpriteFactory Instance;
 
 
-    GameObject attackAnimation;
-    GameObject slashAnimation;
+    private GameObject attackAnimation;
+    private GameObject slashAnimation;
+    private GameObject movementPath; 
     // Start is called before the first frame update
     void Start()
     {
         attackAnimation = Resources.Load<GameObject>("Skill Sprites/Attack/AttackAnimation");
         slashAnimation = Resources.Load<GameObject>("Skill Sprites/Slash/SlashAnimation");
+        movementPath = Resources.Load<GameObject>("Movement Path");
     }
 
     public void InstantiateSkillSprite(string spriteName, Vector3 position, Vector3 direction)
@@ -28,6 +30,7 @@ public class SpriteFactory : MonoBehaviour
         {
             var x = Instantiate(slashAnimation, position, Quaternion.AngleAxis(angle, Vector3.forward));
         }
+        if (spriteName == "Movement Path") Instantiate(movementPath, position, Quaternion.identity);
     }
     private void Awake()
     {

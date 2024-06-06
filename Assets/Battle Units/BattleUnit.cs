@@ -25,7 +25,18 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract void InitalizeBattleStats();
 
-    // TODO ideally this will return the position closest to the attacking unit
+    public virtual void ShowMovementPath() 
+    {
+        Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
+        Debug.Log(graph);
+        graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, ValidMovementPositions);
+        List<Vector3> path = Helpers.BFS(graph, transform.position, new Vector3(5, 5, 0));
+        Debug.Log(path);
+        foreach (Vector3 position in path)
+        {
+            SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
+        }
+    }
     public virtual Vector3 ClosestValidAttackPosition(Vector3 attackTargetPosition)
     {
         List<Vector3> attackPositions = new List<Vector3>();
