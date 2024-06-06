@@ -24,7 +24,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract void InitalizeBattleStats();
 
     // TODO ideally this will return the position closest to the attacking unit
-    public virtual Vector3 ValidAttackPositions(Vector3 attackTargetPosition)
+    public virtual Vector3 ClosestValidAttackPosition(Vector3 attackTargetPosition)
     {
         List<Vector3> attackPositions = new List<Vector3>();
         Vector3 pos1 = attackTargetPosition + Vector3.up;
@@ -42,11 +42,11 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
         if (attackPositions.Count == 0) return attackTargetPosition;
 
-        return attackPositions[0];
+        return FindClosestPosition(attackPositions);
     }
     public virtual IEnumerator MoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
     {
-        Vector3 targetDestination = ValidAttackPositions(attackTargetPosition);
+        Vector3 targetDestination = ClosestValidAttackPosition(attackTargetPosition);
         Vector3 direction = targetDestination - transform.position;
         Vector3 xTargetDestination = new Vector3(targetDestination.x, transform.position.y, transform.position.z);
         Vector3 startingPosition = transform.position;
@@ -161,5 +161,22 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
             battleStatsString = $"Enemy {Environment.NewLine} HP: {currentHealth} / {MaxHealthStat} {Environment.NewLine} ATK: {AttackStat} {Environment.NewLine} MOV: {MovementStat}";
         }
         UnitBattleStatsText.SetText(battleStatsString);
+    }
+
+    private Vector3 FindClosestPosition(List<Vector3> validAttackPositions)
+    {
+        Vector3 currentPosition = transform.position;
+        float smallestDistance = float.MaxValue;
+        Vector3 closestPosition = Vector3.zero;
+        foreach (Vector3 position in validAttackPositions)
+        {
+            float distance = Vector3.Distance(currentPosition, position);
+            if (distance < smallestDistance)
+            {
+                smallestDistance = distance;
+                closestPosition = position;
+            }
+        }
+        return closestPosition;
     }
 }
