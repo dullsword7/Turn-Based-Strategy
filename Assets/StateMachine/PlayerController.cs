@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private List<GameObject> unitActionMenuButtons;
     [SerializeField] private GameObject playerToEnemyTurnTransition;
     [SerializeField] private GameObject enemyToPlayerTurnTransition;
+    [SerializeField] private UnitManager unitManager;
 
     private StateMachine playerStateMachine;
     private List<GameObject> enemyUnitList;
@@ -21,15 +22,12 @@ public class PlayerController : MonoBehaviour
     public GameObject SelectUnitActionCursor => selectUnitActionCursor;
     public GameObject UnitActionMenu => unitActionMenu;
     public List<GameObject> UnitActionMenuButtons => unitActionMenuButtons;
-    public List<GameObject> EnemyUnitList => enemyUnitList;
     public GameObject PlayerToEnemyTurnTransition => playerToEnemyTurnTransition;
     public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
-    //private void DoSomething() { }
+    public UnitManager UnitManager => unitManager;
     private void Awake()
     {
         playerStateMachine = new StateMachine(this);
-        enemyUnitList = GameObject.FindGameObjectsWithTag("Enemy").ToList();
-        //PlayerUnit.PlayerUnitDeath += DoSomething;
         
     }
     // Start is called before the first frame update

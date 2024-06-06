@@ -7,28 +7,26 @@ public class EnemyBattlePhaseState : IState
 {
     private PlayerController player;
     private List<EnemyUnit> enemies;
-    private Action waitForHealthBars;
+    private Action waitForHealthBarsToFinishUpdating;
 
     public EnemyBattlePhaseState(PlayerController player)
     {
         this.player = player;
-        waitForHealthBars += HealthBarsFinishedUpdating;
+        waitForHealthBarsToFinishUpdating += HealthBarsFinishedUpdating;
     }
     public void Enter()
     {
         Debug.Log("Entering Enemy Battle Phase State");
-        // if all enemies are dead or if player is dead, return
 
-        foreach (GameObject enemy in player.EnemyUnitList)
+        foreach (EnemyUnit enemy in player.UnitManager.enemyUnitList)
         {
-            EnemyUnit enemyUnit = enemy.GetComponent<EnemyUnit>();
-            if (enemyUnit.IsPlayerUnitInRange(player.PlayerUnit))
+            if (enemy.IsPlayerUnitInRange(player.PlayerUnit))
             {
                 Debug.Log("Attacking player unit");
-                AttackTarget(enemyUnit, enemyUnit.attackStat);
+                AttackTarget(enemy, enemy.attackStat);
             }
-            // do enemy behavior
         }
+        // if all enemies are dead or if player is dead, return
     }
 
     public void Exit()
@@ -43,13 +41,17 @@ public class EnemyBattlePhaseState : IState
     {
         player.PlayerUnit.TurnOffMovementRange();
         player.PlayerUnit.TurnOnInfo();
-        enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position, () => {
-            enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream", () => {
-                Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
-                SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-                player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, player.PlayerUnit, waitForHealthBars));
-            }));
-        }));
+        enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position, () => EnemyUnitFinishedMoving(enemyUnit, damage)));
+    }
+    private void EnemyUnitFinishedMoving(EnemyUnit enemyUnit, float damage)
+    {
+        enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream", () => AnimationFinishedPlaying(enemyUnit, damage)));
+    }
+    private void AnimationFinishedPlaying(EnemyUnit enemyUnit, float damage)
+    {
+        Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
+        SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
+        player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, player.PlayerUnit, waitForHealthBarsToFinishUpdating));
     }
     private void HealthBarsFinishedUpdating()
     {

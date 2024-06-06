@@ -3907,6 +3907,7 @@ MonoBehaviour:
   - {fileID: 23797321}
   playerToEnemyTurnTransition: {fileID: 759027498}
   enemyToPlayerTurnTransition: {fileID: 1412224838}
+  unitManager: {fileID: 2131889597}
   PlayerUnit: {fileID: 0}
 --- !u!1 &1833703706
 GameObject:
@@ -4746,6 +4747,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1859660921}
+  enemyUnitList: []
+  enemies: []
 --- !u!4 &2131889598
 Transform:
   m_ObjectHideFlags: 0
@@ -4955,11 +4958,11 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1760849828}
+  - {fileID: 2131889598}
   - {fileID: 1859660919}
   - {fileID: 1539621648}
   - {fileID: 830465414}
   - {fileID: 350311433}
-  - {fileID: 2131889598}
   - {fileID: 1008648429}
   - {fileID: 1234044829}
   - {fileID: 303245177}

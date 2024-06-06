@@ -21,7 +21,6 @@ public class PlayerUnit : BattleUnit
     public float maxHealthStat;
     public float attackStat;
     public float movementStat;
-    public Action BattleUnitDeath;
 
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
     public HashSet<Vector3> validPositions;

@@ -11,7 +11,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     private int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
     private int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
 
-    public Action PlayerUnitDeath;
+    public Action<GameObject> BattleUnitDeath;
     public abstract GameObject UnitBattleStatsHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract HashSet<Vector3> ValidPositions { get; set; }
@@ -147,6 +147,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         Debug.Log("Finished Updating Healthbar");
         yield return new WaitForSeconds(2f);
         onComplete?.Invoke();
+        if (HealthStat <= 0) BattleUnitDeath?.Invoke(gameObject);
     }
     public void UpdateStats(float currentHealth, BattleUnit battleUnit)
     {
