@@ -12,9 +12,11 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     private int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
 
     public Action<GameObject> BattleUnitDeath;
+
+    public abstract HashSet<Vector3> ValidPositions { get; set; }
+    public abstract HashSet<Vector3> ValidMovementPositions { get; set; }
     public abstract GameObject UnitBattleStatsHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
-    public abstract HashSet<Vector3> ValidPositions { get; set; }
     public abstract Image HealthBar { get; set; }
     public abstract float MaxHealthStat { get; set; }
     public abstract float HealthStat { get; set; }
@@ -35,10 +37,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         // if the attacker is already adjacent to its target, dont move
         if (transform.position == pos1 || transform.position == pos2 || transform.position == pos3 || transform.position == pos4) return transform.position;
 
-        if (ValidPositions.Contains(pos1)) attackPositions.Add(pos1);
-        if (ValidPositions.Contains(pos2)) attackPositions.Add(pos2);
-        if (ValidPositions.Contains(pos3)) attackPositions.Add(pos3);
-        if (ValidPositions.Contains(pos4)) attackPositions.Add(pos4);
+        if (ValidMovementPositions.Contains(pos1)) attackPositions.Add(pos1);
+        if (ValidMovementPositions.Contains(pos2)) attackPositions.Add(pos2);
+        if (ValidMovementPositions.Contains(pos3)) attackPositions.Add(pos3);
+        if (ValidMovementPositions.Contains(pos4)) attackPositions.Add(pos4);
 
         if (attackPositions.Count == 0) return attackTargetPosition;
 
@@ -162,12 +164,61 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         }
         UnitBattleStatsText.SetText(battleStatsString);
     }
+    public void InitializeMovementRange(Vector3 startPosition)
+    {
+        startPosition = new Vector3(startPosition.x, startPosition.y, 0);
+        ValidPositions = initializeValidPositions(startPosition);
+        calculateValidMovementPositions(1, ValidPositions);
 
+        ValidMovementPositions = new HashSet<Vector3>(ValidPositions);
+        ValidMovementPositions.ExceptWith(FindInvalidPositions());
+
+    }
+    public HashSet<Vector3> FindInvalidPositions()
+    {
+        HashSet<Vector3> invalidPositions = new HashSet<Vector3>();
+        foreach (Vector3 position in ValidPositions)
+        {
+            Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
+            if (col != null) invalidPositions.Add(position);
+        }
+        return invalidPositions;
+    }
+    private HashSet<Vector3> initializeValidPositions(Vector3 startingPosition)
+    {
+        HashSet<Vector3> res = new HashSet<Vector3>();
+        res.Add(startingPosition);
+        res.Add(startingPosition + Vector3.up);
+        res.Add(startingPosition + Vector3.down);
+        res.Add(startingPosition + Vector3.left);
+        res.Add(startingPosition + Vector3.right);
+        return res;
+    }
+    private void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
+    {
+        HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
+        if (counter >= MovementStat)
+        {
+            return;
+        }
+        else
+        {
+            foreach (Vector3 position in validPositions)
+            {
+                newValidPositions.Add(position + Vector3.up);
+                newValidPositions.Add(position + Vector3.down);
+                newValidPositions.Add(position + Vector3.left);
+                newValidPositions.Add(position + Vector3.right);
+            }
+            validPositions.UnionWith(newValidPositions);
+            calculateValidMovementPositions(counter + 1, validPositions);
+        } 
+    }
     private Vector3 FindClosestPosition(List<Vector3> validAttackPositions)
     {
         Vector3 currentPosition = transform.position;
         float smallestDistance = float.MaxValue;
-        Vector3 closestPosition = Vector3.zero;
+        Vector3 closestPosition = new Vector3();
         foreach (Vector3 position in validAttackPositions)
         {
             float distance = Vector3.Distance(currentPosition, position);

@@ -21,9 +21,11 @@ public class PlayerUnit : BattleUnit
     private float maxHealthStat;
     private float attackStat;
     private float movementStat;
+    private HashSet<Vector3> validPositions;
+    private HashSet<Vector3> validMovementPositions;
 
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
-    public HashSet<Vector3> validPositions;
+    public override HashSet<Vector3> ValidMovementPositions { get => validMovementPositions; set => validMovementPositions = value; }
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
     public override Image HealthBar { get => healthBar; set => healthBar = value; }
@@ -46,16 +48,6 @@ public class PlayerUnit : BattleUnit
     {
         movementRangeHolder.SetActive(false);
     }
-    public void InitializeMovementRange(Vector3 startPosition)
-    {
-        startPosition = new Vector3(startPosition.x, startPosition.y, 0);
-        validPositions = initializeValidPositions(startPosition);
-        calculateValidMovementPositions(1, validPositions);
-        foreach (Vector3 position in validPositions)
-        {
-            Instantiate(validTile, position, Quaternion.identity, movementRangeHolder.transform);
-        }
-    }
     
     public override void InitalizeBattleStats()
     {
@@ -67,10 +59,18 @@ public class PlayerUnit : BattleUnit
         string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
+    private void SetUpMovementRangeIndicator()
+    {
+        foreach (Vector3 position in validPositions)
+        {
+            Instantiate(validTile, position, Quaternion.identity, movementRangeHolder.transform);
+        }
+    }
     public void Start()
     {
         InitalizeBattleStats();
         InitializeMovementRange(transform.position);
+        SetUpMovementRangeIndicator();
         movementRangeHolder.SetActive(false);
     }
     private void Awake()
@@ -86,36 +86,5 @@ public class PlayerUnit : BattleUnit
         {
             playerInput.AttackTargetSelected -= DealDamage;
         }
-    }
-
-    private HashSet<Vector3> initializeValidPositions(Vector3 startingPosition)
-    {
-        HashSet<Vector3> res = new HashSet<Vector3>();
-        res.Add(startingPosition);
-        res.Add(startingPosition + Vector3.up);
-        res.Add(startingPosition + Vector3.down);
-        res.Add(startingPosition + Vector3.left);
-        res.Add(startingPosition + Vector3.right);
-        return res;
-    }
-    public void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
-    {
-        HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
-        if (counter >= movementStat)
-        {
-            return;
-        }
-        else
-        {
-            foreach (Vector3 position in validPositions)
-            {
-                newValidPositions.Add(position + Vector3.up);
-                newValidPositions.Add(position + Vector3.down);
-                newValidPositions.Add(position + Vector3.left);
-                newValidPositions.Add(position + Vector3.right);
-            }
-            validPositions.UnionWith(newValidPositions);
-            calculateValidMovementPositions(counter + 1, validPositions);
-        } 
     }
 }
