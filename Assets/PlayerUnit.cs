@@ -17,10 +17,10 @@ public class PlayerUnit : BattleUnit
     [SerializeField] private GameObject healthBarHolder;
 
 
-    public float healthStat;
-    public float maxHealthStat;
-    public float attackStat;
-    public float movementStat;
+    private float healthStat;
+    private float maxHealthStat;
+    private float attackStat;
+    private float movementStat;
 
     public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
     public HashSet<Vector3> validPositions;

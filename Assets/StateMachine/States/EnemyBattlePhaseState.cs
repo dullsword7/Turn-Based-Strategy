@@ -7,55 +7,52 @@ public class EnemyBattlePhaseState : IState
 {
     private PlayerController player;
     private List<EnemyUnit> enemies;
-    private Action waitForHealthBarsToFinishUpdating;
+    private Action waitForAllEnemyAttacksToFinish;
 
     public EnemyBattlePhaseState(PlayerController player)
     {
         this.player = player;
-        waitForHealthBarsToFinishUpdating += HealthBarsFinishedUpdating;
+        waitForAllEnemyAttacksToFinish += AllEnemyAttacksCompleted;
     }
     public void Enter()
     {
         Debug.Log("Entering Enemy Battle Phase State");
 
-        foreach (EnemyUnit enemy in player.UnitManager.enemyUnitList)
-        {
-            if (enemy.IsPlayerUnitInRange(player.PlayerUnit))
-            {
-                Debug.Log("Attacking player unit");
-                AttackTarget(enemy, enemy.attackStat);
-            }
-        }
         // if all enemies are dead or if player is dead, return
+        if (player.UnitManager.enemyUnitList.Count == 0) player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState);
+        player.StartCoroutine(ProcessEnemyUnitAttacks(waitForAllEnemyAttacksToFinish));
     }
 
     public void Exit()
     {
         Debug.Log("Exiting Enemy Battle Phase State");
     }
-
-    public void Update()
+    private void AllEnemyAttacksCompleted()
     {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState);
     }
-    private void AttackTarget(EnemyUnit enemyUnit, float damage)
+    private IEnumerator ProcessEnemyUnitAttacks(Action onComplete)
+    {
+        foreach (EnemyUnit enemy in player.UnitManager.enemyUnitList)
+        {
+            if (enemy.IsPlayerUnitInRange(player.PlayerUnit))
+            {
+                Debug.Log("Attacking player unit");
+                yield return player.StartCoroutine(AttackTarget(enemy, enemy.AttackStat));
+            }
+        }
+        onComplete?.Invoke();
+        yield return null;
+    }
+    private IEnumerator AttackTarget(EnemyUnit enemyUnit, float damage)
     {
         player.PlayerUnit.TurnOffMovementRange();
         player.PlayerUnit.TurnOnInfo();
-        enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position, () => EnemyUnitFinishedMoving(enemyUnit, damage)));
-    }
-    private void EnemyUnitFinishedMoving(EnemyUnit enemyUnit, float damage)
-    {
-        enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream", () => AnimationFinishedPlaying(enemyUnit, damage)));
-    }
-    private void AnimationFinishedPlaying(EnemyUnit enemyUnit, float damage)
-    {
+        yield return enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position));
+        yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
         Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
         SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-        player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, player.PlayerUnit, waitForHealthBarsToFinishUpdating));
+        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, player.PlayerUnit));
     }
-    private void HealthBarsFinishedUpdating()
-    {
-        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState); 
-    }
-
+    public void Update() { }
 }
