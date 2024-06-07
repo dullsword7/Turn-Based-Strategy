@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PlayerUnit : BattleUnit
 {
     [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private BattleStatsScriptableObject unitBattleStats;
+    [SerializeField] private BattleUnitInfo playerUnitInfo;
     [SerializeField] private GameObject movementTile;
     [SerializeField] private GameObject attackTile;
     [SerializeField] private GameObject movementRangeHolder;
@@ -24,6 +24,8 @@ public class PlayerUnit : BattleUnit
     private float movementStat;
     private HashSet<Vector3> allTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInAttackRange;
+    private BattleStats baseStats;
+    private BattleStats currentStats;
 
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
@@ -38,43 +40,10 @@ public class PlayerUnit : BattleUnit
     public override TMP_Text UnitBattleStatsText { get => unitBattleStatsText; set => unitBattleStatsText = value; }
     public override GameObject MovementTile { get => movementTile; set => movementTile = value; }
     public override GameObject AttackTile { get => attackTile; set => attackTile = value; }
-    public void DealDamage(float damageDealt)
-    {
-        healthStat -= damageDealt;
-        Debug.Log("Dealing: " + damageDealt);
-    }
+    public override BattleUnitInfo BattleUnitInfo { get => playerUnitInfo; set => playerUnitInfo = value; }
+    public override BattleStats BaseStats { get => baseStats; set => baseStats = value; }
+    public override BattleStats CurrentStats { get => currentStats; set => currentStats = value; }
     
-    
-    public override void InitalizeBattleStats()
-    {
-        healthStat = unitBattleStats.baseStats.Health;
-        maxHealthStat = healthStat;
-        attackStat = unitBattleStats.baseStats.Attack;
-        movementStat = unitBattleStats.baseStats.Movement;
-
-        string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
-        unitBattleStatsText.SetText(battleStatsString);
-    }
-    public void Start()
-    {
-        InitalizeBattleStats();
-        InitializeAttackAndMovementRange(transform.position);
-        SetUpMovementRangeIndicator();
-        SetUpAttackRangeIndicator();
-        movementRangeHolder.SetActive(false);
-    }
-    private void Awake()
-    {
-        if (playerInput != null)
-        {
-            playerInput.AttackTargetSelected += DealDamage;
-        }
-    }
-    private void OnDestroy()
-    {
-        if (playerInput != null)
-        {
-            playerInput.AttackTargetSelected -= DealDamage;
-        }
-    }
+    private void Awake() { }
+    private void OnDestroy() { }
 }

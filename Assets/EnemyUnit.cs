@@ -15,13 +15,15 @@ public class EnemyUnit : BattleUnit
     [SerializeField] private GameObject movementTile;
     [SerializeField] private GameObject attackTile;
 
-    public BattleStatsScriptableObject testDummyStats;
+    public BattleUnitInfo enemyUnitInfo;
     private float healthStat;
     private float maxHealthStat;
     private float attackStat;
     private float movementStat;
     private HashSet<Vector3> allTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInAttackRange;
+    private BattleStats baseStats;
+    private BattleStats currentStats;
 
 
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
@@ -37,24 +39,10 @@ public class EnemyUnit : BattleUnit
     public override TMP_Text UnitBattleStatsText { get => unitBattleStatsText; set => unitBattleStatsText = value; }
     public override GameObject MovementTile { get => movementTile; set => movementTile = value; }
     public override GameObject AttackTile { get => attackTile; set => attackTile = value; }
-    public void Start()
-    {
-        InitalizeBattleStats();
-        InitializeAttackAndMovementRange(transform.position);
-        SetUpMovementRangeIndicator();
-        SetUpAttackRangeIndicator();
-        movementRangeHolder.SetActive(false);
-    }
-    public override void InitalizeBattleStats()
-    {
-        healthStat = testDummyStats.baseStats.Health;
-        maxHealthStat = healthStat;
-        attackStat = testDummyStats.baseStats.Attack;
-        movementStat = testDummyStats.baseStats.Movement;
+    public override BattleUnitInfo BattleUnitInfo { get => enemyUnitInfo; set => enemyUnitInfo = value; }
+    public override BattleStats BaseStats { get => baseStats; set => baseStats = value; }
+    public override BattleStats CurrentStats { get => currentStats; set => currentStats = value; }
 
-        string battleStatsString = $"Enemy {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
-        unitBattleStatsText.SetText(battleStatsString);
-    }
     public bool IsPlayerUnitInRange(PlayerUnit player)
     {
         return allTilePositionsInAttackRange.Contains(player.transform.position);

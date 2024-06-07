@@ -2145,7 +2145,7 @@ MonoBehaviour:
   healthBar: {fileID: 2065775972}
   movementTile: {fileID: 6702842154831006641, guid: 94c8c3c6f2d75b54680d77c7e665559b, type: 3}
   attackTile: {fileID: 6702842154831006641, guid: 73a9890ef98ec594488fe99ad748ef5e, type: 3}
-  testDummyStats: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
+  enemyUnitInfo: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
 --- !u!61 &468595085
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5134,7 +5134,7 @@ MonoBehaviour:
   healthBar: {fileID: 1319645924}
   movementTile: {fileID: 6702842154831006641, guid: 94c8c3c6f2d75b54680d77c7e665559b, type: 3}
   attackTile: {fileID: 6702842154831006641, guid: 73a9890ef98ec594488fe99ad748ef5e, type: 3}
-  testDummyStats: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
+  enemyUnitInfo: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
 --- !u!61 &1040530433
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6916,7 +6916,7 @@ MonoBehaviour:
   healthBar: {fileID: 1373308396}
   movementTile: {fileID: 6702842154831006641, guid: 94c8c3c6f2d75b54680d77c7e665559b, type: 3}
   attackTile: {fileID: 6702842154831006641, guid: 73a9890ef98ec594488fe99ad748ef5e, type: 3}
-  testDummyStats: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
+  enemyUnitInfo: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
 --- !u!61 &1439098692
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7836,7 +7836,7 @@ MonoBehaviour:
   healthBar: {fileID: 1681886027}
   movementTile: {fileID: 6702842154831006641, guid: 94c8c3c6f2d75b54680d77c7e665559b, type: 3}
   attackTile: {fileID: 6702842154831006641, guid: 73a9890ef98ec594488fe99ad748ef5e, type: 3}
-  testDummyStats: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
+  enemyUnitInfo: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
 --- !u!61 &1539621646
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9337,7 +9337,7 @@ MonoBehaviour:
   healthBar: {fileID: 1053626398}
   movementTile: {fileID: 6702842154831006641, guid: 94c8c3c6f2d75b54680d77c7e665559b, type: 3}
   attackTile: {fileID: 6702842154831006641, guid: 73a9890ef98ec594488fe99ad748ef5e, type: 3}
-  testDummyStats: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
+  enemyUnitInfo: {fileID: 11400000, guid: a918a96c1300b4b419514a3047638aa9, type: 2}
 --- !u!61 &1802995041
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9943,7 +9943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerInput: {fileID: 0}
-  unitBattleStats: {fileID: 11400000, guid: 2b7eb00e450c18a4ebed2a6128924b08, type: 2}
+  playerUnitInfo: {fileID: 11400000, guid: 2b7eb00e450c18a4ebed2a6128924b08, type: 2}
   movementTile: {fileID: 6702842154831006641, guid: 94c8c3c6f2d75b54680d77c7e665559b, type: 3}
   attackTile: {fileID: 6702842154831006641, guid: 73a9890ef98ec594488fe99ad748ef5e, type: 3}
   movementRangeHolder: {fileID: 1193195424}

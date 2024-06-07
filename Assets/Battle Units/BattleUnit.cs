@@ -19,6 +19,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract GameObject MovementRangeHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract Image HealthBar { get; set; }
+
     public abstract float MaxHealthStat { get; set; }
     public abstract float HealthStat { get; set; }
     public abstract float AttackStat { get; set; }
@@ -26,7 +27,32 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract GameObject MovementTile { get; set; }
     public abstract GameObject AttackTile { get; set; }
+    public abstract BattleUnitInfo BattleUnitInfo { get; set; }
+    public abstract BattleStats BaseStats { get; set; }
+    public abstract BattleStats CurrentStats { get; set; }
 
+    public void Start()
+    {
+        InitializeBattleStats();
+        InitializeAttackAndMovementRange(transform.position);
+        SetUpMovementRangeIndicator();
+        SetUpAttackRangeIndicator();
+        MovementRangeHolder.SetActive(false);
+    }
+    public void InitializeBattleStats()
+    {
+        BaseStats = BattleUnitInfo.baseStats;
+        MaxHealthStat = BaseStats.Health;
+        HealthStat = MaxHealthStat;
+        AttackStat = BaseStats.Attack;
+        MovementStat = BaseStats.Movement;
+
+        string battleStatsString = $"{BattleUnitInfo.BattleUnitName}";
+        battleStatsString += $"\nHP: {HealthStat} / {MaxHealthStat}";
+        battleStatsString += $"\nATK: {AttackStat}";
+        battleStatsString += $"\nMOV: {MovementStat}";
+        UnitBattleStatsText.SetText(battleStatsString);
+    }
 
     /// <summary>
     /// Makes BattleUnit's movement range indicator visible.
@@ -235,12 +261,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     {
         float healthBeforeDamage = HealthStat;
         float healthAfterDamage = HealthStat - damageAmount;
-        HealthStat -= damageAmount;
         if (healthAfterDamage <= 0)
         {
             HealthStat = 0;
             healthAfterDamage = 0;
         }
+        HealthStat -= damageAmount;
 
         while (healthBeforeDamage > healthAfterDamage)
         {
@@ -403,5 +429,4 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
         return col == null;
     }
-    public abstract void InitalizeBattleStats();
 }
