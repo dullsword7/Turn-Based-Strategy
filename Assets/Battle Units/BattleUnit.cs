@@ -117,7 +117,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <returns></returns>
     public virtual IEnumerator MoveToPosition(Vector3 targetPosition, Action onComplete = null)
     {
-        InitializeMovementRange(transform.position);
+        InitializeAttackAndMovementRange(transform.position);
         Vector3 targetDestination = ClosestValidAttackPosition(targetPosition);
 
         List<Vector3> path = ShowMovementPath(targetDestination);
@@ -278,18 +278,18 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     }
 
     /// <summary>
-    /// Initializes AllTilePositionsInMovementRage with all tiles reachable from current position.
+    /// Initializes AllTilePositionsInMovementRange with all tiles reachable from current position.
+    /// Initializes AllTilePositionsInAttackRange with all tiles attackable from current position.
     /// </summary>
     /// <param name="startPosition">the current position</param>
-    public void InitializeMovementRange(Vector3 startPosition)
+    public void InitializeAttackAndMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
         AllTilePositionsInMovementRange = initializeValidPositions(startPosition);
         calculateValidMovementPositions(1, AllTilePositionsInMovementRange);
-
+        AllTilePositionsInAttackRange = calculateTilesInAttackRange(AllTilePositionsInMovementRange);
     }
 
-    
     /// <summary>
     /// Creates a set of the startingPosition unioned with its four adjacent tiles, if they are not occupied/// 
     /// </summary>
@@ -325,7 +325,6 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
         if (counter >= MovementStat)
         {
-            AllTilePositionsInAttackRange = calculateTilesInAttackRange(validPositions);
             return;
         }
         else

@@ -40,17 +40,17 @@ public class EnemyUnit : BattleUnit
     public void Start()
     {
         InitalizeBattleStats();
-        InitializeMovementRange(transform.position);
+        InitializeAttackAndMovementRange(transform.position);
         SetUpMovementRangeIndicator();
         SetUpAttackRangeIndicator();
         movementRangeHolder.SetActive(false);
     }
     public override void InitalizeBattleStats()
     {
-        healthStat = testDummyStats.healthStat;
+        healthStat = testDummyStats.baseStats.Health;
         maxHealthStat = healthStat;
-        attackStat = testDummyStats.attackStat;
-        movementStat = testDummyStats.movementStat;
+        attackStat = testDummyStats.baseStats.Attack;
+        movementStat = testDummyStats.baseStats.Movement;
 
         string battleStatsString = $"Enemy {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine}";
         unitBattleStatsText.SetText(battleStatsString);

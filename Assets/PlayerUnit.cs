@@ -47,10 +47,10 @@ public class PlayerUnit : BattleUnit
     
     public override void InitalizeBattleStats()
     {
-        healthStat = unitBattleStats.healthStat;
+        healthStat = unitBattleStats.baseStats.Health;
         maxHealthStat = healthStat;
-        attackStat = unitBattleStats.attackStat;
-        movementStat = unitBattleStats.movementStat;
+        attackStat = unitBattleStats.baseStats.Attack;
+        movementStat = unitBattleStats.baseStats.Movement;
 
         string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
@@ -58,7 +58,7 @@ public class PlayerUnit : BattleUnit
     public void Start()
     {
         InitalizeBattleStats();
-        InitializeMovementRange(transform.position);
+        InitializeAttackAndMovementRange(transform.position);
         SetUpMovementRangeIndicator();
         SetUpAttackRangeIndicator();
         movementRangeHolder.SetActive(false);
