@@ -21,10 +21,12 @@ public class PlayerUnit : BattleUnit
     private float maxHealthStat;
     private float attackStat;
     private float movementStat;
-    private HashSet<Vector3> validPositions;
+    private HashSet<Vector3> allTilePositionsInMovementRange;
+    private HashSet<Vector3> allTilePositionsInAttackRange;
     private HashSet<Vector3> validMovementPositions;
 
-    public override HashSet<Vector3> ValidPositions { get => validPositions; set => validPositions = value; }
+    public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
+    public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
     public override HashSet<Vector3> ValidMovementPositions { get => validMovementPositions; set => validMovementPositions = value; }
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
@@ -59,9 +61,16 @@ public class PlayerUnit : BattleUnit
         string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
     }
+    private void SetUpAttackRangeIndicator()
+    {
+        foreach (Vector3 position in allTilePositionsInAttackRange)
+        {
+            SpriteFactory.Instance.InstantiateSkillSprite("AttackRange", position, Vector3.zero);
+        }
+    }
     private void SetUpMovementRangeIndicator()
     {
-        foreach (Vector3 position in validPositions)
+        foreach (Vector3 position in allTilePositionsInMovementRange)
         {
             Instantiate(validTile, position, Quaternion.identity, movementRangeHolder.transform);
         }
@@ -71,6 +80,7 @@ public class PlayerUnit : BattleUnit
         InitalizeBattleStats();
         InitializeMovementRange(transform.position);
         SetUpMovementRangeIndicator();
+        SetUpAttackRangeIndicator();
         movementRangeHolder.SetActive(false);
     }
     private void Awake()

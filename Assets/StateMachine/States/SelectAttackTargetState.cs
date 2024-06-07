@@ -83,7 +83,7 @@ public class SelectAttackTargetState : IState
     {
         if (player.PlayerUnit == null) return;
 
-        if (player.PlayerUnit.ValidPositions.Contains(player.transform.position)) return;
+        if (player.PlayerUnit.AllTilePositionsInAttackRange.Contains(player.transform.position)) return;
 
         player.transform.Translate(direction * -1);
     }

@@ -16,6 +16,7 @@ public class SpriteFactory : MonoBehaviour
         attackAnimation = Resources.Load<GameObject>("Skill Sprites/Attack/AttackAnimation");
         slashAnimation = Resources.Load<GameObject>("Skill Sprites/Slash/SlashAnimation");
         movementPath = Resources.Load<GameObject>("Movement Path");
+        movementPath = Resources.Load<GameObject>("AttackRange");
     }
 
     public void InstantiateSkillSprite(string spriteName, Vector3 position, Vector3 direction)
@@ -34,6 +35,10 @@ public class SpriteFactory : MonoBehaviour
         {
             var x = Instantiate(movementPath, position, Quaternion.identity);
             Destroy(x, 3f);
+        }
+        if (spriteName == "AttackRange")
+        {
+            var x = Instantiate(movementPath, position, Quaternion.identity);
         }
     }
     private void Awake()

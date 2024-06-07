@@ -36,7 +36,7 @@ public static class Helpers
 
         if (!graph.ContainsKey(endPosition))
         {
-            Debug.LogError("Target Is Uncreachable From Current Position");
+            Debug.Log("Target Is Uncreachable From Current Position");
             return path;
         }
 

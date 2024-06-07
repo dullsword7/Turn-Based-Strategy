@@ -13,7 +13,8 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
     public Action<GameObject> BattleUnitDeath;
 
-    public abstract HashSet<Vector3> ValidPositions { get; set; }
+    public abstract HashSet<Vector3> AllTilePositionsInMovementRange { get; set; }
+    public abstract HashSet<Vector3> AllTilePositionsInAttackRange { get; set; }
     public abstract HashSet<Vector3> ValidMovementPositions { get; set; }
     public abstract GameObject UnitBattleStatsHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
@@ -25,7 +26,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract void InitalizeBattleStats();
 
-    public virtual void ShowMovementPath(Vector3 endPosition) 
+    public virtual List<Vector3> ShowMovementPath(Vector3 endPosition) 
     {
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
         graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, ValidMovementPositions);
@@ -34,6 +35,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         {
             SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
         }
+        return path;
     }
     public virtual Vector3 ClosestValidAttackPosition(Vector3 attackTargetPosition)
     {
@@ -57,9 +59,18 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     }
     public virtual IEnumerator MoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
     {
+        InitializeMovementRange(transform.position);
         Vector3 targetDestination = ClosestValidAttackPosition(attackTargetPosition);
 
-        ShowMovementPath(targetDestination);
+        List<Vector3> path = ShowMovementPath(targetDestination);
+
+        // should return immediately if there is no path
+        if (path.Count < 1)
+        {
+            Debug.Log("No path to destination found, canceling movement");
+            yield return null;
+        } 
+
 
         Vector3 direction = targetDestination - transform.position;
         Vector3 xTargetDestination = new Vector3(targetDestination.x, transform.position.y, transform.position.z);
@@ -180,31 +191,38 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public void InitializeMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
-        ValidPositions = initializeValidPositions(startPosition);
-        calculateValidMovementPositions(1, ValidPositions);
-
-        ValidMovementPositions = new HashSet<Vector3>(ValidPositions);
-        ValidMovementPositions.ExceptWith(FindInvalidPositions());
+        AllTilePositionsInMovementRange = initializeValidPositions(startPosition);
+        calculateValidMovementPositions(1, AllTilePositionsInMovementRange);
 
     }
     public HashSet<Vector3> FindInvalidPositions()
     {
         HashSet<Vector3> invalidPositions = new HashSet<Vector3>();
-        foreach (Vector3 position in ValidPositions)
+        foreach (Vector3 position in AllTilePositionsInMovementRange)
         {
             Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
             if (col != null) invalidPositions.Add(position);
         }
         return invalidPositions;
     }
+    // Creates a set of the startingPosition unioned with its four adjacent tiles, if they are not occupied
     private HashSet<Vector3> initializeValidPositions(Vector3 startingPosition)
     {
         HashSet<Vector3> res = new HashSet<Vector3>();
         res.Add(startingPosition);
-        res.Add(startingPosition + Vector3.up);
-        res.Add(startingPosition + Vector3.down);
-        res.Add(startingPosition + Vector3.left);
-        res.Add(startingPosition + Vector3.right);
+
+        if (MovementStat == 0) return res;
+
+        Vector3 pos1 = startingPosition + Vector3.up;
+        Vector3 pos2 = startingPosition + Vector3.down;
+        Vector3 pos3 = startingPosition + Vector3.left;
+        Vector3 pos4 = startingPosition + Vector3.right;
+
+        if (CheckTilePositionEmpty(pos1)) res.Add(pos1);
+        if (CheckTilePositionEmpty(pos2)) res.Add(pos2);
+        if (CheckTilePositionEmpty(pos3)) res.Add(pos3);
+        if (CheckTilePositionEmpty(pos4)) res.Add(pos4);
+
         return res;
     }
     private void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
@@ -212,20 +230,52 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
         if (counter >= MovementStat)
         {
+            AllTilePositionsInAttackRange = calculateTilesInAttackRange(validPositions);
             return;
         }
         else
         {
             foreach (Vector3 position in validPositions)
             {
-                newValidPositions.Add(position + Vector3.up);
-                newValidPositions.Add(position + Vector3.down);
-                newValidPositions.Add(position + Vector3.left);
-                newValidPositions.Add(position + Vector3.right);
+                Vector3 pos1 = position + Vector3.up;
+                Vector3 pos2 = position + Vector3.down;
+                Vector3 pos3 = position + Vector3.left;
+                Vector3 pos4 = position + Vector3.right;
+
+                if (CheckTilePositionEmpty(pos1)) newValidPositions.Add(pos1);
+                if (CheckTilePositionEmpty(pos2)) newValidPositions.Add(pos2);
+                if (CheckTilePositionEmpty(pos3)) newValidPositions.Add(pos3);
+                if (CheckTilePositionEmpty(pos4)) newValidPositions.Add(pos4);
             }
-            validPositions.UnionWith(newValidPositions);
-            calculateValidMovementPositions(counter + 1, validPositions);
+
+            AllTilePositionsInMovementRange.UnionWith(newValidPositions);
+            calculateValidMovementPositions(counter + 1, newValidPositions);
         } 
+    }
+
+    /// <summary>
+    /// Calculates a BattleUnit's attack tiles.
+    /// </summary>
+    /// <param name="positions">the tiles of a BattleUnit's movement range</param>
+    /// <returns>HashSet containing the tile positions a BattleUnit can attack</returns>
+    private HashSet<Vector3> calculateTilesInAttackRange(HashSet<Vector3> positions)
+    {
+        Debug.Log(positions.Count);
+        HashSet<Vector3> attackableTiles = new HashSet<Vector3>(positions);
+        foreach (Vector3 position in positions)
+        {
+            Vector3 pos1 = position + Vector3.up;
+            Vector3 pos2 = position + Vector3.down;
+            Vector3 pos3 = position + Vector3.left;
+            Vector3 pos4 = position + Vector3.right;
+
+            attackableTiles.Add(pos1);
+            attackableTiles.Add(pos2);
+            attackableTiles.Add(pos3);
+            attackableTiles.Add(pos4);
+
+        }
+        return attackableTiles;
     }
     private Vector3 FindClosestPosition(List<Vector3> validAttackPositions)
     {
@@ -242,5 +292,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
             }
         }
         return closestPosition;
+    }
+    private bool CheckTilePositionEmpty(Vector3 position)
+    {
+        Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
+        return col == null;
     }
 }
