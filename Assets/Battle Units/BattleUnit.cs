@@ -39,6 +39,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         SetUpAttackRangeIndicator();
         MovementRangeHolder.SetActive(false);
     }
+
+    /// <summary>
+    /// Reads and sets stats from BattleStats struct in BattleUnitInfo
+    /// </summary>
     public void InitializeBattleStats()
     {
         BaseStats = BattleUnitInfo.baseStats;
