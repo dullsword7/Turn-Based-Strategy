@@ -30,7 +30,11 @@ public class SpriteFactory : MonoBehaviour
         {
             var x = Instantiate(slashAnimation, position, Quaternion.AngleAxis(angle, Vector3.forward));
         }
-        if (spriteName == "Movement Path") Instantiate(movementPath, position, Quaternion.identity);
+        if (spriteName == "Movement Path")
+        {
+            var x = Instantiate(movementPath, position, Quaternion.identity);
+            Destroy(x, 3f);
+        }
     }
     private void Awake()
     {

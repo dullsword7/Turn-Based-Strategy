@@ -12,12 +12,10 @@ public class SelectAttackTargetState : IState
     private bool hoverState;
     private EnemyUnit enemyUnit;
     private bool lockControls;
-    private Action waitForHealthBars;
     public SelectAttackTargetState(PlayerController player)
     {
         this.player = player;
         timeoutLength = 0.2f;
-        waitForHealthBars += HealthBarsFinishedUpdating;
     }
     public void Enter()
     {
@@ -98,14 +96,20 @@ public class SelectAttackTargetState : IState
             lockControls = true;
             player.PlayerUnit.TurnOffMovementRange();
             player.PlayerUnit.TurnOffInfo();
-            player.PlayerUnit.StartCoroutine(player.PlayerUnit.MoveToPosition(enemy.transform.position, () => {
-                player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream", () => {
-                    Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
-                    enemy.StartCoroutine(enemy.ReceiveDamage(player.PlayerUnit.AttackStat, enemy, waitForHealthBars));
-                    SpriteFactory.Instance.InstantiateSkillSprite("Slash", col.transform.position, direction);
-                }));
-            }));
+
+            player.StartCoroutine(AttackEnemyUnit(enemy));
         }
+    }
+    private IEnumerator AttackEnemyUnit(EnemyUnit enemy)
+    {
+        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.MoveToPosition(enemy.transform.position));
+        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream"));
+
+        Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
+        SpriteFactory.Instance.InstantiateSkillSprite("Slash", enemy.transform.position, direction);
+        yield return enemy.StartCoroutine(enemy.ReceiveDamage(player.PlayerUnit.AttackStat, enemy));
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.attackSuccessfulState); 
+        yield return null;
     }
     private void HoverOverUnit()
     {
@@ -122,11 +126,6 @@ public class SelectAttackTargetState : IState
             enemyUnit.TurnOffInfo();
             hoverState = false;
         }
-    }
-
-    private void HealthBarsFinishedUpdating()
-    {
-        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.attackSuccessfulState); 
     }
 }
 

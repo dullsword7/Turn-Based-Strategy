@@ -72,7 +72,6 @@ public class PlayerUnit : BattleUnit
         InitializeMovementRange(transform.position);
         SetUpMovementRangeIndicator();
         movementRangeHolder.SetActive(false);
-        ShowMovementPath();
     }
     private void Awake()
     {

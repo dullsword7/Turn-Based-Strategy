@@ -25,13 +25,11 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract void InitalizeBattleStats();
 
-    public virtual void ShowMovementPath() 
+    public virtual void ShowMovementPath(Vector3 endPosition) 
     {
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
-        Debug.Log(graph);
         graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, ValidMovementPositions);
-        List<Vector3> path = Helpers.BFS(graph, transform.position, new Vector3(5, 5, 0));
-        Debug.Log(path);
+        List<Vector3> path = Helpers.BFS(graph, transform.position, endPosition);
         foreach (Vector3 position in path)
         {
             SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
@@ -60,6 +58,9 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public virtual IEnumerator MoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
     {
         Vector3 targetDestination = ClosestValidAttackPosition(attackTargetPosition);
+
+        ShowMovementPath(targetDestination);
+
         Vector3 direction = targetDestination - transform.position;
         Vector3 xTargetDestination = new Vector3(targetDestination.x, transform.position.y, transform.position.z);
         Vector3 startingPosition = transform.position;
@@ -88,6 +89,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
             yield return null;
         }
         transform.position = targetDestination;
+
 
         yield return new WaitForSeconds(1f);
         onComplete?.Invoke();
