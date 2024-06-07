@@ -19,12 +19,10 @@ public class EnemyUnit : BattleUnit
     private float movementStat;
     private HashSet<Vector3> allTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInAttackRange;
-    private HashSet<Vector3> validMovementPositions;
 
 
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
-    public override HashSet<Vector3> ValidMovementPositions { get => validMovementPositions; set => validMovementPositions = value; }
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
     public override Image HealthBar { get => healthBar; set => healthBar = value; }
@@ -50,6 +48,6 @@ public class EnemyUnit : BattleUnit
     }
     public bool IsPlayerUnitInRange(PlayerUnit player)
     {
-        return allTilePositionsInMovementRange.Contains(player.transform.position);
+        return allTilePositionsInAttackRange.Contains(player.transform.position);
     }
 }

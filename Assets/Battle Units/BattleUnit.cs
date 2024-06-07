@@ -15,7 +15,6 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
     public abstract HashSet<Vector3> AllTilePositionsInMovementRange { get; set; }
     public abstract HashSet<Vector3> AllTilePositionsInAttackRange { get; set; }
-    public abstract HashSet<Vector3> ValidMovementPositions { get; set; }
     public abstract GameObject UnitBattleStatsHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract Image HealthBar { get; set; }
@@ -29,7 +28,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public virtual List<Vector3> ShowMovementPath(Vector3 endPosition) 
     {
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
-        graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, ValidMovementPositions);
+        graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, AllTilePositionsInMovementRange);
         List<Vector3> path = Helpers.BFS(graph, transform.position, endPosition);
         foreach (Vector3 position in path)
         {
@@ -48,10 +47,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         // if the attacker is already adjacent to its target, dont move
         if (transform.position == pos1 || transform.position == pos2 || transform.position == pos3 || transform.position == pos4) return transform.position;
 
-        if (ValidMovementPositions.Contains(pos1)) attackPositions.Add(pos1);
-        if (ValidMovementPositions.Contains(pos2)) attackPositions.Add(pos2);
-        if (ValidMovementPositions.Contains(pos3)) attackPositions.Add(pos3);
-        if (ValidMovementPositions.Contains(pos4)) attackPositions.Add(pos4);
+        if (AllTilePositionsInMovementRange.Contains(pos1)) attackPositions.Add(pos1);
+        if (AllTilePositionsInMovementRange.Contains(pos2)) attackPositions.Add(pos2);
+        if (AllTilePositionsInMovementRange.Contains(pos3)) attackPositions.Add(pos3);
+        if (AllTilePositionsInMovementRange.Contains(pos4)) attackPositions.Add(pos4);
 
         if (attackPositions.Count == 0) return attackTargetPosition;
 
@@ -260,7 +259,6 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <returns>HashSet containing the tile positions a BattleUnit can attack</returns>
     private HashSet<Vector3> calculateTilesInAttackRange(HashSet<Vector3> positions)
     {
-        Debug.Log(positions.Count);
         HashSet<Vector3> attackableTiles = new HashSet<Vector3>(positions);
         foreach (Vector3 position in positions)
         {

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthStat: 30
   attackStat: 5
-  movementStat: 3
+  movementStat: 5
