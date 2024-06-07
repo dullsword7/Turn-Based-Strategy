@@ -35,11 +35,8 @@ public class EnemyBattlePhaseState : IState
     {
         foreach (EnemyUnit enemy in player.UnitManager.enemyUnitList)
         {
-            if (enemy.IsPlayerUnitInRange(player.PlayerUnit))
-            {
-                Debug.Log("Attacking player unit");
-                yield return player.StartCoroutine(AttackTarget(enemy, enemy.AttackStat));
-            }
+            Debug.Log("Attacking player unit");
+            yield return player.StartCoroutine(AttackTarget(enemy, enemy.AttackStat));
         }
         onComplete?.Invoke();
         yield return null;
@@ -49,6 +46,10 @@ public class EnemyBattlePhaseState : IState
         player.PlayerUnit.TurnOffMovementRange();
         player.PlayerUnit.TurnOnInfo();
         yield return enemyUnit.StartCoroutine(enemyUnit.MoveToPosition(player.PlayerUnit.transform.position));
+
+        // if the playerUnit is not within enemyUnit's attack range
+        if (!enemyUnit.IsPlayerUnitInRange(player.PlayerUnit)) yield break;
+
         yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
         Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
         SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
