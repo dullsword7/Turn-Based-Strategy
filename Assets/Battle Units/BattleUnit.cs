@@ -28,14 +28,25 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract GameObject AttackTile { get; set; }
 
 
+    /// <summary>
+    /// Makes BattleUnit's movement range indicator visible.
+    /// </summary>
     public void TurnOnMovementRange()
     {
         MovementRangeHolder.SetActive(true);
     }
+
+    /// <summary>
+    /// Makes BattleUnit's movement range indicator no longer visible?
+    /// </summary>
     public void TurnOffMovementRange()
     {
         MovementRangeHolder.SetActive(false);
     }
+
+    /// <summary>
+    ///  Instantiates the AttackTile prefab at every position in BattleUnit's attack range.
+    /// </summary>
     public void SetUpAttackRangeIndicator()
     {
         foreach (Vector3 position in AllTilePositionsInAttackRange)
@@ -43,6 +54,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
             Instantiate(AttackTile, position, Quaternion.identity, MovementRangeHolder.transform);
         }
     }
+
+    /// <summary>
+    /// Instantiates the MovementTile prefab at every position in BattleUnit's movement range.
+    /// </summary>
     public void SetUpMovementRangeIndicator()
     {
         foreach (Vector3 position in AllTilePositionsInMovementRange)
@@ -50,6 +65,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
             Instantiate(MovementTile, position, Quaternion.identity, MovementRangeHolder.transform);
         }
     }
+
+    /// <summary>
+    /// Displays a BattleUnit's caculated movement path from its current position, to a target position.
+    /// </summary>
+    /// <param name="endPosition">the final movement position</param>
+    /// <returns>a list of positions of the shortest path to the target position</returns>
     public virtual List<Vector3> ShowMovementPath(Vector3 endPosition) 
     {
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
@@ -61,6 +82,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         }
         return path;
     }
+
+    /// <summary>
+    /// Calculates the closest valid attack position, from the target to the attacking BattleUnit.   
+    /// </summary>
+    /// <param name="attackTargetPosition">the position of BattleUnit being targeted</param>
+    /// <returns>the location of the closest valid attack position</returns>
     public virtual Vector3 ClosestValidAttackPosition(Vector3 attackTargetPosition)
     {
         List<Vector3> attackPositions = new List<Vector3>();
@@ -81,10 +108,17 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
         return FindClosestPosition(attackPositions);
     }
-    public virtual IEnumerator MoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
+
+    /// <summary>
+    /// Moves the BattleUnit from its current position, to a target position.
+    /// </summary>
+    /// <param name="targetPosition">the position to move to</param>
+    /// <param name="onComplete">action invoked when coroutine completes</param>
+    /// <returns></returns>
+    public virtual IEnumerator MoveToPosition(Vector3 targetPosition, Action onComplete = null)
     {
         InitializeMovementRange(transform.position);
-        Vector3 targetDestination = ClosestValidAttackPosition(attackTargetPosition);
+        Vector3 targetDestination = ClosestValidAttackPosition(targetPosition);
 
         List<Vector3> path = ShowMovementPath(targetDestination);
 
@@ -128,6 +162,13 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         yield return new WaitForSeconds(1f);
         onComplete?.Invoke();
     }
+
+    /// <summary>
+    /// Starts an animation and returns once the animation is complete.
+    /// </summary>
+    /// <param name="stateName">name of the animation to start and wait for</param>
+    /// <param name="onComplete">action invoked when coroutine completes</param>
+    /// <returns></returns>
     public IEnumerator StartAndWaitForAnimation(string stateName, Action onComplete = null)
     {
         Animator anim = GetComponent<Animator>();
@@ -164,16 +205,32 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         onComplete?.Invoke();
 
     }
+
+    /// <summary>
+    /// Turns off BattleUnit's battle stats and health bar.
+    /// </summary>
     public void TurnOffInfo()
     {
         UnitBattleStatsHolder.SetActive(false);
         HealthBarHolder.SetActive(false);
     }
+
+    /// <summary>
+    /// Turns on BattleUnit's battle stats and health bar.
+    /// </summary>
     public void TurnOnInfo()
     {
         UnitBattleStatsHolder.SetActive(true);
         HealthBarHolder.SetActive(true);
     }
+
+    /// <summary>
+    /// BattleUnit receives damage, updates their hp values, and health bar visual.
+    /// </summary>
+    /// <param name="damageAmount">the amount of damage to recieve</param>
+    /// <param name="battleUnit">the BattleUnit receiving the damage</param>
+    /// <param name="onComplete">action invoked when coroutine completes</param>
+    /// <returns></returns>
     public virtual IEnumerator ReceiveDamage(float damageAmount, BattleUnit battleUnit, Action onComplete = null)
     {
         float healthBeforeDamage = HealthStat;
@@ -198,6 +255,14 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         onComplete?.Invoke();
         if (HealthStat <= 0) BattleUnitDeath?.Invoke(gameObject);
     }
+    
+
+    /// base class probably should not contain types of sub classes
+    /// <summary>
+    /// Updates the battle stats of a BattleUnit.
+    /// </summary>
+    /// <param name="currentHealth">the new health value</param>
+    /// <param name="battleUnit">reference to the BattleUnit type</param>
     public void UpdateStats(float currentHealth, BattleUnit battleUnit)
     {
         string battleStatsString = "No Stats Found";
@@ -211,6 +276,11 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         }
         UnitBattleStatsText.SetText(battleStatsString);
     }
+
+    /// <summary>
+    /// Initializes AllTilePositionsInMovementRage with all tiles reachable from current position.
+    /// </summary>
+    /// <param name="startPosition">the current position</param>
     public void InitializeMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
@@ -218,17 +288,13 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         calculateValidMovementPositions(1, AllTilePositionsInMovementRange);
 
     }
-    public HashSet<Vector3> FindInvalidPositions()
-    {
-        HashSet<Vector3> invalidPositions = new HashSet<Vector3>();
-        foreach (Vector3 position in AllTilePositionsInMovementRange)
-        {
-            Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
-            if (col != null) invalidPositions.Add(position);
-        }
-        return invalidPositions;
-    }
-    // Creates a set of the startingPosition unioned with its four adjacent tiles, if they are not occupied
+
+    
+    /// <summary>
+    /// Creates a set of the startingPosition unioned with its four adjacent tiles, if they are not occupied/// 
+    /// </summary>
+    /// <param name="startingPosition">the starting position</param>
+    /// <returns>the positions of unoccupied tiles adjacent to the starting position</returns>
     private HashSet<Vector3> initializeValidPositions(Vector3 startingPosition)
     {
         HashSet<Vector3> res = new HashSet<Vector3>();
@@ -248,6 +314,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
         return res;
     }
+    
+    /// <summary>
+    /// Recursively calculates the movement range of a BattleUnit based on their movement stat 
+    /// </summary>
+    /// <param name="counter">the BattleUnit's movement stat</param>
+    /// <param name="validPositions">the current set of valid positions</param>
     private void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
     {
         HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
@@ -299,6 +371,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         }
         return attackableTiles;
     }
+
+    /// <summary>
+    /// Finds the closest position to the attacking BattleUnit. 
+    /// </summary>
+    /// <param name="validAttackPositions">list of attack positions to consider</param>
+    /// <returns>the closest attack position</returns>
     private Vector3 FindClosestPosition(List<Vector3> validAttackPositions)
     {
         Vector3 currentPosition = transform.position;
@@ -315,6 +393,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         }
         return closestPosition;
     }
+
+    /// <summary>
+    /// Checks if the current tile position is occupied. 
+    /// </summary>
+    /// <param name="position">the position to check</param>
+    /// <returns>true if tile is empty, false if tile is not empty</returns>
     private bool CheckTilePositionEmpty(Vector3 position)
     {
         Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
