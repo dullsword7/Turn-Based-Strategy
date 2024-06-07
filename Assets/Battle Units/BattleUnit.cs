@@ -16,6 +16,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract HashSet<Vector3> AllTilePositionsInMovementRange { get; set; }
     public abstract HashSet<Vector3> AllTilePositionsInAttackRange { get; set; }
     public abstract GameObject UnitBattleStatsHolder { get; set; }
+    public abstract GameObject MovementRangeHolder { get; set; }
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract Image HealthBar { get; set; }
     public abstract float MaxHealthStat { get; set; }
@@ -23,8 +24,32 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract float AttackStat { get; set; }
     public abstract float MovementStat { get; set; }
     public abstract TMP_Text UnitBattleStatsText { get; set; }
-    public abstract void InitalizeBattleStats();
+    public abstract GameObject MovementTile { get; set; }
+    public abstract GameObject AttackTile { get; set; }
 
+
+    public void TurnOnMovementRange()
+    {
+        MovementRangeHolder.SetActive(true);
+    }
+    public void TurnOffMovementRange()
+    {
+        MovementRangeHolder.SetActive(false);
+    }
+    public void SetUpAttackRangeIndicator()
+    {
+        foreach (Vector3 position in AllTilePositionsInAttackRange)
+        {
+            Instantiate(AttackTile, position, Quaternion.identity, MovementRangeHolder.transform);
+        }
+    }
+    public void SetUpMovementRangeIndicator()
+    {
+        foreach (Vector3 position in AllTilePositionsInMovementRange)
+        {
+            Instantiate(MovementTile, position, Quaternion.identity, MovementRangeHolder.transform);
+        }
+    }
     public virtual List<Vector3> ShowMovementPath(Vector3 endPosition) 
     {
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
@@ -67,9 +92,8 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         if (path.Count < 1)
         {
             Debug.Log("No path to destination found, canceling movement");
-            yield return null;
+            yield break;
         } 
-
 
         Vector3 direction = targetDestination - transform.position;
         Vector3 xTargetDestination = new Vector3(targetDestination.x, transform.position.y, transform.position.z);
@@ -296,4 +320,5 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
         return col == null;
     }
+    public abstract void InitalizeBattleStats();
 }

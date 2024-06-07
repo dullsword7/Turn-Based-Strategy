@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 253963304292414315}
   - component: {fileID: 128522967731365266}
   m_Layer: 0
-  m_Name: ValidTile
+  m_Name: movementTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

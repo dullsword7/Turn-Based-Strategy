@@ -97,7 +97,6 @@ public class SelectAttackTargetState : IState
             player.PlayerUnit.TurnOffMovementRange();
             player.PlayerUnit.TurnOffInfo();
 
-            if (enemy == null) Debug.Log("what the actual fuckjhk");
             player.StartCoroutine(AttackEnemyUnit(enemy));
         }
     }

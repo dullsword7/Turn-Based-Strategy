@@ -9,7 +9,8 @@ public class PlayerUnit : BattleUnit
 {
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private BattleStatsScriptableObject unitBattleStats;
-    [SerializeField] private GameObject validTile;
+    [SerializeField] private GameObject movementTile;
+    [SerializeField] private GameObject attackTile;
     [SerializeField] private GameObject movementRangeHolder;
     [SerializeField] private GameObject unitBattleStatsHolder;
     [SerializeField] private TMP_Text unitBattleStatsText;
@@ -27,6 +28,7 @@ public class PlayerUnit : BattleUnit
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
+    public override GameObject MovementRangeHolder { get => movementRangeHolder; set => movementRangeHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
     public override Image HealthBar { get => healthBar; set => healthBar = value; }
     public override float MaxHealthStat { get => maxHealthStat; set => maxHealthStat = value; }
@@ -34,20 +36,14 @@ public class PlayerUnit : BattleUnit
     public override float AttackStat { get => attackStat; set => attackStat = value; }
     public override float MovementStat { get => movementStat; set => movementStat = value; }
     public override TMP_Text UnitBattleStatsText { get => unitBattleStatsText; set => unitBattleStatsText = value; }
+    public override GameObject MovementTile { get => movementTile; set => movementTile = value; }
+    public override GameObject AttackTile { get => attackTile; set => attackTile = value; }
     public void DealDamage(float damageDealt)
     {
         healthStat -= damageDealt;
         Debug.Log("Dealing: " + damageDealt);
     }
     
-    public void TurnOnMovementRange()
-    {
-        movementRangeHolder.SetActive(true);
-    }
-    public void TurnOffMovementRange()
-    {
-        movementRangeHolder.SetActive(false);
-    }
     
     public override void InitalizeBattleStats()
     {
@@ -58,20 +54,6 @@ public class PlayerUnit : BattleUnit
 
         string battleStatsString = $"Player {Environment.NewLine} HP: {healthStat} / {maxHealthStat} {Environment.NewLine} ATK: {attackStat} {Environment.NewLine} MOV: {movementStat}";
         unitBattleStatsText.SetText(battleStatsString);
-    }
-    private void SetUpAttackRangeIndicator()
-    {
-        //foreach (Vector3 position in allTilePositionsInAttackRange)
-        //{
-        //    SpriteFactory.Instance.InstantiateSkillSprite("AttackRange", position, Vector3.zero);
-        //}
-    }
-    private void SetUpMovementRangeIndicator()
-    {
-        foreach (Vector3 position in allTilePositionsInMovementRange)
-        {
-            Instantiate(validTile, position, Quaternion.identity, movementRangeHolder.transform);
-        }
     }
     public void Start()
     {

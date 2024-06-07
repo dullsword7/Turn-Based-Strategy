@@ -81,6 +81,7 @@ public class ViewMapState : IState
             TurnOffPreviousUnitInfo();
             battleUnit = col.gameObject.GetComponent<BattleUnit>();
             battleUnit.TurnOnInfo();
+            battleUnit.TurnOnMovementRange();
 
             if (battleUnit is PlayerUnit)
             {
@@ -94,6 +95,7 @@ public class ViewMapState : IState
         if (col == null)
         {
             battleUnit?.TurnOffInfo();
+            battleUnit?.TurnOffMovementRange();
 
             if (battleUnit is PlayerUnit)
             {
@@ -118,6 +120,7 @@ public class ViewMapState : IState
     private void TurnOffPreviousUnitInfo()
     {
         previousBattleUnit?.TurnOffInfo();
+        previousBattleUnit?.TurnOffMovementRange();
         if (previousBattleUnit is PlayerUnit)
         {
             PlayerUnit playerUnit = previousBattleUnit as PlayerUnit;
