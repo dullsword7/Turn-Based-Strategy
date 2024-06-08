@@ -101,15 +101,20 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// </summary>
     /// <param name="endPosition">the final movement position</param>
     /// <returns>a list of positions of the shortest path to the target position</returns>
-    public virtual List<Vector3> ShowMovementPath(Vector3 endPosition) 
+    public virtual List<Vector3> CalculateMovementPath(Vector3 endPosition) 
     {
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
         graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, AllTilePositionsInMovementRange);
         List<Vector3> path = Helpers.BFS(graph, transform.position, endPosition);
-        foreach (Vector3 position in path)
+
+        if (Constants.ENABLE_MOVEMENT_PATH_DEBUGGING)
         {
-            SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
+            foreach (Vector3 position in path)
+            {
+                SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
+            }
         }
+
         return path;
     }
 
@@ -150,7 +155,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         InitializeAttackAndMovementRange(transform.position);
         Vector3 targetDestination = ClosestValidAttackPosition(targetPosition);
 
-        List<Vector3> path = ShowMovementPath(targetDestination);
+        List<Vector3> path = CalculateMovementPath(targetDestination);
 
         // should return immediately if there is no path
         if (path.Count < 1)
@@ -268,13 +273,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         }
         HealthStat -= damageAmount;
 
-        while (healthBeforeDamage > healthAfterDamage)
-        {
-            healthBeforeDamage -= 1;
-            UpdateStats(healthBeforeDamage, battleUnit);
-            HealthBar.fillAmount = healthBeforeDamage / MaxHealthStat;
-            yield return new WaitForSeconds(0.1f);
-        }
+        yield return StartCoroutine(UpdateHealthBar(healthBeforeDamage, healthAfterDamage));
 
         Debug.Log("Finished Updating Healthbar");
         yield return new WaitForSeconds(2f);
@@ -282,24 +281,35 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         if (HealthStat <= 0) BattleUnitDeath?.Invoke(gameObject);
     }
     
+    private IEnumerator UpdateHealthBar(float healthBeforeDamage, float healthAfterDamage)
+    {
+        float elapsedTime = 0;
+        float timer = 1f;
 
-    /// base class probably should not contain types of sub classes
+        // move vertically
+        while (elapsedTime < timer)
+        {
+            float currentHp = Mathf.Lerp(healthBeforeDamage, healthAfterDamage, (elapsedTime / timer));
+            HealthBar.fillAmount = currentHp / MaxHealthStat;
+            UpdateStats(Mathf.Round(currentHp));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        HealthBar.fillAmount = healthAfterDamage / MaxHealthStat;
+        yield return null;
+    }
+
     /// <summary>
     /// Updates the battle stats of a BattleUnit.
     /// </summary>
     /// <param name="currentHealth">the new health value</param>
     /// <param name="battleUnit">reference to the BattleUnit type</param>
-    public void UpdateStats(float currentHealth, BattleUnit battleUnit)
+    public void UpdateStats(float currentHealth)
     {
-        string battleStatsString = "No Stats Found";
-        if (battleUnit is PlayerUnit)
-        {
-            battleStatsString = $"Player {Environment.NewLine} HP: {currentHealth} / {MaxHealthStat} {Environment.NewLine} ATK: {AttackStat} {Environment.NewLine} MOV: {MovementStat}";
-        }
-        if (battleUnit is EnemyUnit)
-        {
-            battleStatsString = $"Enemy {Environment.NewLine} HP: {currentHealth} / {MaxHealthStat} {Environment.NewLine} ATK: {AttackStat} {Environment.NewLine} MOV: {MovementStat}";
-        }
+        string battleStatsString = $"{BattleUnitInfo.BattleUnitName}";
+        battleStatsString += $"\nHP: {currentHealth} / {MaxHealthStat}";
+        battleStatsString += $"\nATK: {AttackStat}";
+        battleStatsString += $"\nMOV: {MovementStat}";
         UnitBattleStatsText.SetText(battleStatsString);
     }
 

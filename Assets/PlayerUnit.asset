@@ -15,5 +15,5 @@ MonoBehaviour:
   BattleUnitName: Player
   baseStats:
     Health: 100
-    Attack: 20
-    Movement: 5
+    Attack: 30
+    Movement: 3

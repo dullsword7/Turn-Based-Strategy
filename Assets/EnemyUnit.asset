@@ -16,4 +16,4 @@ MonoBehaviour:
   baseStats:
     Health: 50
     Attack: 5
-    Movement: 5
+    Movement: 2
