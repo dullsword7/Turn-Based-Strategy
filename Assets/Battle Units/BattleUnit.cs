@@ -13,6 +13,11 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
     public Action<GameObject> BattleUnitDeath;
 
+
+    // Every tile in movement range taking obstacles into consideration
+    public abstract HashSet<Vector3> AllCrossableTilePositionsInMovementRange { get; set; }
+
+    // Every tile in movement range ignoring all obstacles
     public abstract HashSet<Vector3> AllTilePositionsInMovementRange { get; set; }
     public abstract HashSet<Vector3> AllTilePositionsInAttackRange { get; set; }
     public abstract GameObject UnitBattleStatsHolder { get; set; }
@@ -31,6 +36,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract BattleStats BaseStats { get; set; }
     public abstract BattleStats CurrentStats { get; set; }
 
+
     public void Start()
     {
         InitializeBattleStats();
@@ -38,6 +44,15 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         SetUpMovementRangeIndicator();
         SetUpAttackRangeIndicator();
         MovementRangeHolder.SetActive(false);
+
+        //if (this is EnemyUnit)
+        //{
+        //    CrossableMovementTiles = calculateCrossableMovementTiles();
+        //    foreach (Vector3 position in CrossableMovementTiles)
+        //    {
+        //        SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
+        //    }
+        //}
     }
     /// <summary>
     /// Reads and sets stats from BattleStats struct in BattleUnitInfo
@@ -89,7 +104,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// </summary>
     public void SetUpMovementRangeIndicator()
     {
-        foreach (Vector3 position in AllTilePositionsInMovementRange)
+        foreach (Vector3 position in AllCrossableTilePositionsInMovementRange)
         {
             Instantiate(MovementTile, position, Quaternion.identity, MovementRangeHolder.transform);
         }
@@ -102,16 +117,21 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <returns>a list of positions of the shortest path to the target position</returns>
     public virtual List<Vector3> CalculateMovementPath(Vector3 endPosition) 
     {
+        AllCrossableTilePositionsInMovementRange = calculateCrossableMovementTiles();
         Dictionary<Vector3, List<Vector3>> graph = new Dictionary<Vector3, List<Vector3>>();
-        graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, AllTilePositionsInMovementRange);
+        graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, AllCrossableTilePositionsInMovementRange);
         List<Vector3> path = Helpers.BFS(graph, transform.position, endPosition);
 
         if (Constants.ENABLE_MOVEMENT_PATH_DEBUGGING)
         {
-            foreach (Vector3 position in path)
+            foreach (Vector3 position in AllCrossableTilePositionsInMovementRange)
             {
                 SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
             }
+            //foreach (Vector3 position in path)
+            //{
+            //    SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
+            //}
         }
 
         return path;
@@ -133,10 +153,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         // if the attacker is already adjacent to its target, dont move
         if (transform.position == pos1 || transform.position == pos2 || transform.position == pos3 || transform.position == pos4) return transform.position;
 
-        if (AllTilePositionsInMovementRange.Contains(pos1)) attackPositions.Add(pos1);
-        if (AllTilePositionsInMovementRange.Contains(pos2)) attackPositions.Add(pos2);
-        if (AllTilePositionsInMovementRange.Contains(pos3)) attackPositions.Add(pos3);
-        if (AllTilePositionsInMovementRange.Contains(pos4)) attackPositions.Add(pos4);
+        if (AllCrossableTilePositionsInMovementRange.Contains(pos1)) attackPositions.Add(pos1);
+        if (AllCrossableTilePositionsInMovementRange.Contains(pos2)) attackPositions.Add(pos2);
+        if (AllCrossableTilePositionsInMovementRange.Contains(pos3)) attackPositions.Add(pos3);
+        if (AllCrossableTilePositionsInMovementRange.Contains(pos4)) attackPositions.Add(pos4);
 
         if (attackPositions.Count == 0) return attackTargetPosition;
 
@@ -280,6 +300,12 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         if (HealthStat <= 0) BattleUnitDeath?.Invoke(gameObject);
     }
     
+    /// <summary>
+    /// Lerps the health bar image fill amount from a start value to an end value
+    /// </summary>
+    /// <param name="healthBeforeDamage">the health value before damage</param>
+    /// <param name="healthAfterDamage">the health value after damage</param>
+    /// <returns></returns>
     private IEnumerator UpdateHealthBar(float healthBeforeDamage, float healthAfterDamage)
     {
         float elapsedTime = 0;
@@ -320,9 +346,9 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public void InitializeAttackAndMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
-        AllTilePositionsInMovementRange = initializeValidPositions(startPosition);
-        calculateValidMovementPositions(1, AllTilePositionsInMovementRange);
-        AllTilePositionsInAttackRange = calculateTilesInAttackRange(AllTilePositionsInMovementRange);
+        AllCrossableTilePositionsInMovementRange = initializeValidPositions(startPosition);
+        calculateValidMovementPositions(1, AllCrossableTilePositionsInMovementRange);
+        AllTilePositionsInAttackRange = calculateTilesInAttackRange(AllCrossableTilePositionsInMovementRange);
     }
 
     /// <summary>
@@ -377,7 +403,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
                 if (CheckTilePositionEmpty(pos4)) newValidPositions.Add(pos4);
             }
 
-            AllTilePositionsInMovementRange.UnionWith(newValidPositions);
+            AllCrossableTilePositionsInMovementRange.UnionWith(newValidPositions);
             calculateValidMovementPositions(counter + 1, newValidPositions);
         } 
     }
@@ -463,5 +489,107 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         {
             spriteRenderer.color = color;
         }
+    }
+    /// <summary>
+    /// Calculates all tiles the BattleUnit is allowed to move on top of. 
+    /// </summary>
+    /// <returns>The set of all tiles a BattleUnit can move over</returns>
+    public HashSet<Vector3> calculateCrossableMovementTiles()
+    {
+        calculateCrossableValidMovementPositions(1, initializeCrossableTilePositions(transform.position));
+        HashSet<Vector3> crossableMovementTiles = new HashSet<Vector3>(AllCrossableTilePositionsInMovementRange);
+
+        LayerMask sameObjectLayerMask = 1 << gameObject.layer;
+
+        foreach (Vector3 position in AllCrossableTilePositionsInMovementRange)
+        {
+            // Targets the layer mask of everything except the layer the BattleUnit is on
+            Collider2D objectNotInSameLayer = Physics2D.OverlapPoint(position, ~sameObjectLayerMask);
+            Collider2D objectInSameLayer = Physics2D.OverlapPoint(position, sameObjectLayerMask);
+
+
+            // if the collider is not an enemy remove it from the reachable tiles set
+            if (objectNotInSameLayer != null)
+            {
+                crossableMovementTiles.Remove(position);
+            }
+            // if the collider IS an enemy but MovementStat tiles away from current position, remove it from the reachable tiles set
+            if (objectInSameLayer != null && isOnEdgeTileOfMovementRage(transform.position, position))
+            {
+                crossableMovementTiles.Remove(position);
+            }
+        }
+        return crossableMovementTiles;
+    }
+    /// <summary>
+    /// Checks if a tile is on the edge of a BattleUnit's movement range.
+    /// </summary>
+    /// <param name="startPosition">current position of the BattleUnit</param>
+    /// <param name="endPosition">tile position to check</param>
+    /// <returns>Whether or not the endPosition is BattleUnit.MovementStat tiles away</returns>
+    private bool isOnEdgeTileOfMovementRage(Vector3 startPosition, Vector3 endPosition)
+    {
+        float startX = startPosition.x; 
+        float startY = startPosition.y; 
+        float endX = endPosition.x; 
+        float endY = endPosition.y;
+        return MovementStat == Mathf.Abs(endX - startX) + Mathf.Abs(endY - startY);
+    }
+
+    /// <summary>
+    /// Creates a set of the startingPosition unioned with its four adjacent tiles, ignoring all obstacles
+    /// </summary>
+    /// <param name="startingPosition">the starting position</param>
+    /// <returns>the positions of unoccupied tiles adjacent to the starting position</returns>
+    private HashSet<Vector3> initializeCrossableTilePositions(Vector3 startingPosition)
+    {
+        HashSet<Vector3> res = new HashSet<Vector3>();
+        res.Add(startingPosition);
+
+        if (MovementStat == 0) return res;
+
+        Vector3 pos1 = startingPosition + Vector3.up;
+        Vector3 pos2 = startingPosition + Vector3.down;
+        Vector3 pos3 = startingPosition + Vector3.left;
+        Vector3 pos4 = startingPosition + Vector3.right;
+
+        res.Add(pos1);
+        res.Add(pos2);
+        res.Add(pos3);
+        res.Add(pos4);
+
+        return res;
+    }
+    
+    /// <summary>
+    /// Recursively calculates the movement range of a BattleUnit based on their movement stat, ignoring all obstacles
+    /// </summary>
+    /// <param name="counter">the BattleUnit's movement stat</param>
+    /// <param name="validPositions">the current set of valid positions</param>
+    private void calculateCrossableValidMovementPositions(int counter, HashSet<Vector3> validPositions)
+    {
+        HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
+        if (counter >= MovementStat)
+        {
+            return;
+        }
+        else
+        {
+            foreach (Vector3 position in validPositions)
+            {
+                Vector3 pos1 = position + Vector3.up;
+                Vector3 pos2 = position + Vector3.down;
+                Vector3 pos3 = position + Vector3.left;
+                Vector3 pos4 = position + Vector3.right;
+
+                newValidPositions.Add(pos1);
+                newValidPositions.Add(pos2);
+                newValidPositions.Add(pos3);
+                newValidPositions.Add(pos4);
+            }
+
+            AllCrossableTilePositionsInMovementRange.UnionWith(newValidPositions);
+            calculateCrossableValidMovementPositions(counter + 1, newValidPositions);
+        } 
     }
 }

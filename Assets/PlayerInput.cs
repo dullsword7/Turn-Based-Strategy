@@ -75,7 +75,7 @@ public class PlayerInput : MonoBehaviour
         if (!selectUnitState || playerUnit == null) return;
 
         // Add (0, 0, 1) because cursor is has z position of -1, while all valid positions have z position of 0
-        if (playerUnit.AllTilePositionsInMovementRange.Contains(transform.position + new Vector3(0, 0, 1))) return;
+        if (playerUnit.AllCrossableTilePositionsInMovementRange.Contains(transform.position + new Vector3(0, 0, 1))) return;
 
         transform.Translate(direction * -1);
     }

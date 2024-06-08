@@ -22,11 +22,16 @@ public class PlayerUnit : BattleUnit
     private float maxHealthStat;
     private float attackStat;
     private float movementStat;
+    private HashSet<Vector3> allCrossableTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInAttackRange;
     private BattleStats baseStats;
     private BattleStats currentStats;
 
+    // Every tile in movement range taking obstacles into consideration
+    public override HashSet<Vector3> AllCrossableTilePositionsInMovementRange { get => allCrossableTilePositionsInMovementRange; set => allCrossableTilePositionsInMovementRange = value; }
+
+    // Every tile in movement range ignoring all obstacles
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
