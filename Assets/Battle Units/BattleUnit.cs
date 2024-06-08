@@ -157,40 +157,36 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         {
             Debug.Log("No path to destination found, canceling movement");
             yield break;
-        } 
-
-        Vector3 direction = targetDestination - transform.position;
-        Vector3 xTargetDestination = new Vector3(targetDestination.x, transform.position.y, transform.position.z);
-        Vector3 startingPosition = transform.position;
-         
-        float elapsedTime = 0;
-
-        float xTimer = Math.Abs(direction.x) / 2;
-        float yTimer = Math.Abs(direction.y) / 2;
-        // move horizontally first
-        while (elapsedTime < xTimer)
-        {
-            transform.position = Vector3.Lerp(startingPosition, xTargetDestination, (elapsedTime / xTimer));
-            elapsedTime += Time.deltaTime;
-            yield return null;
         }
 
-        transform.position = xTargetDestination;
-        startingPosition = transform.position;
-        elapsedTime = 0;
-
-        // move vertically
-        while (elapsedTime < yTimer)
+        for (int i = 0; i < path.Count - 1; i++)
         {
-            transform.position = Vector3.Lerp(startingPosition, targetDestination, (elapsedTime / yTimer));
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            yield return StartCoroutine(MoveAlongPath(path[i], path[i + 1]));
         }
-        transform.position = targetDestination;
-
 
         yield return new WaitForSeconds(1f);
         onComplete?.Invoke();
+    }
+
+    /// <summary>
+    /// BattleUnit will lerp its positions from one position to another.
+    /// </summary>
+    /// <param name="startPosition">the start position</param>
+    /// <param name="endPosition">the end position</param>
+    /// <returns></returns>
+    private IEnumerator MoveAlongPath(Vector3 startPosition, Vector3 endPosition)
+    {
+        float elapsedTime = 0;
+        float timer = 0.5f;
+
+        // move vertically
+        while (elapsedTime < timer)
+        {
+            transform.position = Vector3.Lerp(startPosition, endPosition, (elapsedTime / timer));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = endPosition;
     }
 
     /// <summary>
