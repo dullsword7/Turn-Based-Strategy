@@ -113,7 +113,7 @@ public class SelectAttackTargetState : IState
     }
     private void HoverOverUnit()
     {
-        Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Enemy Unit"));
+        Collider2D col = Physics2D.OverlapPoint(player.transform.position, Constants.MASK_ENEMY_UNIT);
 
         if (col != null && !hoverState)
         {

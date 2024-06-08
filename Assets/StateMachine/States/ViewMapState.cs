@@ -11,16 +11,12 @@ public class ViewMapState : IState
     private float timer;
     private float timeoutLength;
 
-    private LayerMask layerMask;
     BattleUnit battleUnit;
     BattleUnit previousBattleUnit;
     public ViewMapState(PlayerController player)
     {
         this.player = player;
         timeoutLength = 0.2f;
-        
-        // allows raycast to target both "Player Unit" layer and "Enemy Unit" layer
-        layerMask = (1 << LayerMask.NameToLayer("Player Unit") | 1 << LayerMask.NameToLayer("Enemy Unit"));
     }
 
     // Entering this state represents the start of a new turn
@@ -82,7 +78,7 @@ public class ViewMapState : IState
     }
     private void HoverOverUnit()
     {
-        Collider2D col = Physics2D.OverlapPoint(player.transform.position, layerMask);
+        Collider2D col = Physics2D.OverlapPoint(player.transform.position, Constants.MASK_BATTLE_UNIT);
         if (col != null)
         {
             TurnOffPreviousUnitInfo();
@@ -115,7 +111,7 @@ public class ViewMapState : IState
     {
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            Collider2D col = Physics2D.OverlapPoint(player.transform.position, LayerMask.GetMask("Player Unit"));
+            Collider2D col = Physics2D.OverlapPoint(player.transform.position, Constants.MASK_PLAYER_UNIT);
             if (col != null)
             {
                 playerUnit = col.gameObject.GetComponent<PlayerUnit>();

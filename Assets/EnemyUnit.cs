@@ -24,7 +24,7 @@ public class EnemyUnit : BattleUnit
     private HashSet<Vector3> allTilePositionsInAttackRange;
     private BattleStats baseStats;
     private BattleStats currentStats;
-
+    private HashSet<Vector3> crossableMovementTiles;
 
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
@@ -46,5 +46,14 @@ public class EnemyUnit : BattleUnit
     public bool IsPlayerUnitInRange(PlayerUnit player)
     {
         return allTilePositionsInAttackRange.Contains(player.transform.position);
+    }
+
+    public void calculateCrossableMovementTiles()
+    {
+        foreach (Vector3 position in allTilePositionsInMovementRange)
+        {
+            Collider2D col = Physics2D.OverlapPoint(transform.position, Constants.MASK_ENEMY_UNIT);
+            //if 
+        }
     }
 }
