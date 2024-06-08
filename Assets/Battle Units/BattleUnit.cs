@@ -39,7 +39,6 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         SetUpAttackRangeIndicator();
         MovementRangeHolder.SetActive(false);
     }
-
     /// <summary>
     /// Reads and sets stats from BattleStats struct in BattleUnitInfo
     /// </summary>
@@ -276,7 +275,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         yield return StartCoroutine(UpdateHealthBar(healthBeforeDamage, healthAfterDamage));
 
         Debug.Log("Finished Updating Healthbar");
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         onComplete?.Invoke();
         if (HealthStat <= 0) BattleUnitDeath?.Invoke(gameObject);
     }
@@ -438,5 +437,31 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     {
         Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
         return col == null;
+    }
+
+    /// <summary>
+    /// Turns BattleUnit's sprite gray to indicate their turn is over.
+    /// </summary>
+    public void ChangeColorToIndicateBattleUnitTurnOver()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        Color color;
+        if (ColorUtility.TryParseHtmlString(Constants.ATTACK_FINISHED_COLOR, out color))
+        {
+            spriteRenderer.color = color;
+        }
+    }
+
+    /// <summary>
+    /// Restores BattleUnit's original sprite color.
+    /// </summary>
+    public void RestoreBattleUnitOriginalColor()
+    {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        Color color;
+        if (ColorUtility.TryParseHtmlString(Constants.ORIGINAL_COLOR, out color))
+        {
+            spriteRenderer.color = color;
+        }
     }
 }

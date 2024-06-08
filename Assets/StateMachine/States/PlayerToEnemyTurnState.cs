@@ -19,6 +19,8 @@ public class PlayerToEnemyTurnState : IState
     public void Enter()
     {
         // if there are no enemies left, skip to win screen
+        if (player.UnitManager.enemyUnitList.Count == 0) player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState);
+
         player.PlayerToEnemyTurnTransition.SetActive(true);
         transitionText = player.PlayerToEnemyTurnTransition.GetComponent<TextMeshProUGUI>();
         transitionText.fontSize = 1; 

@@ -22,11 +22,18 @@ public class ViewMapState : IState
         // allows raycast to target both "Player Unit" layer and "Enemy Unit" layer
         layerMask = (1 << LayerMask.NameToLayer("Player Unit") | 1 << LayerMask.NameToLayer("Enemy Unit"));
     }
+
+    // Entering this state represents the start of a new turn
     public void Enter()
     {
         Debug.Log("Entering ViewMapState");
         player.PlayerUnit?.TurnOffMovementRange();
         player.PlayerUnit?.TurnOffInfo();
+
+        foreach (BattleUnit battleUnit in player.UnitManager.enemyUnitList)
+        {
+            battleUnit.RestoreBattleUnitOriginalColor();
+        }
     }
     public void Update()
     {

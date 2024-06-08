@@ -37,6 +37,7 @@ public class EnemyBattlePhaseState : IState
         {
             Debug.Log("Attacking player unit");
             yield return player.StartCoroutine(AttackTarget(enemy, enemy.AttackStat));
+            enemy.ChangeColorToIndicateBattleUnitTurnOver();
         }
         onComplete?.Invoke();
         yield return null;
