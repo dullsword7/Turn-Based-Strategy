@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class PlayerUnit : BattleUnit
 {
-    [SerializeField] private PlayerInput playerInput;
     [SerializeField] private BattleUnitInfo playerUnitInfo;
     [SerializeField] private GameObject movementTile;
     [SerializeField] private GameObject attackTile;
@@ -43,7 +42,8 @@ public class PlayerUnit : BattleUnit
     public override BattleUnitInfo BattleUnitInfo { get => playerUnitInfo; set => playerUnitInfo = value; }
     public override BattleStats BaseStats { get => baseStats; set => baseStats = value; }
     public override BattleStats CurrentStats { get => currentStats; set => currentStats = value; }
-    
+
+    public GameObject UnitActionsPanel;
     private void Awake() { }
     private void OnDestroy() { }
 }

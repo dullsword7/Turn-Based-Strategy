@@ -23,6 +23,10 @@ public class SelectUnitActionState : IState
     {
         Debug.Log("Entering SelectUnitActionState");
         player.UnitActionMenu.SetActive(true);
+
+        Color color;
+        ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
+        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
     }
     public void Update()
     {
@@ -53,12 +57,12 @@ public class SelectUnitActionState : IState
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            NextMenuButton();
+            PreviousMenuButton();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            PreviousMenuButton();
+            NextMenuButton();
             timer = timeoutLength;
         }
 
@@ -74,18 +78,24 @@ public class SelectUnitActionState : IState
 
     private void NextMenuButton()
     {
+        Color color;
+        ColorUtility.TryParseHtmlString(Constants.DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR, out color);
+        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
         currentMenuButtonIndex += 1;
         if (currentMenuButtonIndex >= player.UnitActionMenuButtons.Count) currentMenuButtonIndex = 0;
-        Vector3 buttonPosition = player.UnitActionMenuButtons[currentMenuButtonIndex].transform.position;
-        selectUnitActionCursor.position = new Vector3(selectUnitActionCursor.position.x, buttonPosition.y, selectUnitActionCursor.position.z);
+        ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
+        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
     }
 
     private void PreviousMenuButton()
     {
+        Color color;
+        ColorUtility.TryParseHtmlString(Constants.DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR, out color);
+        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
         currentMenuButtonIndex -= 1;
         if (currentMenuButtonIndex < 0) currentMenuButtonIndex = player.UnitActionMenuButtons.Count - 1;
-        Vector3 buttonPosition = player.UnitActionMenuButtons[currentMenuButtonIndex].transform.position;
-        selectUnitActionCursor.position = new Vector3(selectUnitActionCursor.position.x, buttonPosition.y, selectUnitActionCursor.position.z);
+        ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
+        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
     }
 
     private void InitializeButtonEvents()
@@ -97,11 +107,19 @@ public class SelectUnitActionState : IState
     }
     private void SetupButtonEventListeners(GameObject go)
     {
-        if (go.name == "Attack Button")
+        if (go.name == "AttackButton")
         { 
             go.GetComponent<Button>().onClick.AddListener(OnAttackButtonClicked);
         }
-        else if (go.name == "End Turn Button")
+        else if (go.name == "ItemButton")
+        {
+            go.GetComponent<Button>().onClick.AddListener(OnItemButtonClicked);
+        }
+        else if (go.name == "WaitButton")
+        {
+            go.GetComponent<Button>().onClick.AddListener(OnWaitButtonClicked);
+        }
+        else if (go.name == "EndTurnButton")
         {
             go.GetComponent<Button>().onClick.AddListener(OnEndTurnButtonClicked);
         }
@@ -109,6 +127,14 @@ public class SelectUnitActionState : IState
     private void OnAttackButtonClicked() 
     {
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectAttackTargetState);
+    }
+    private void OnItemButtonClicked()
+    {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+    }
+    private void OnWaitButtonClicked()
+    {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
     }
     private void OnEndTurnButtonClicked()
     {
