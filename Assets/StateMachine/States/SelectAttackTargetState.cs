@@ -9,9 +9,10 @@ public class SelectAttackTargetState : IState
 
     private float timer;
     private float timeoutLength;
-    private bool hoverState;
     private EnemyUnit enemyUnit;
     private bool lockControls;
+
+    EnemyUnit previousEnemyUnit;
     public SelectAttackTargetState(PlayerController player)
     {
         this.player = player;
@@ -20,7 +21,6 @@ public class SelectAttackTargetState : IState
     public void Enter()
     {
         Debug.Log("Entering SelectAttackTargetState");
-        hoverState = false;
         lockControls = false;
     }
     public void Update ()
@@ -42,7 +42,6 @@ public class SelectAttackTargetState : IState
     public void Exit()
     {
         enemyUnit?.TurnOffInfo();
-        hoverState = false;
         lockControls = false;
 
         player.PlayerStateMachine.PreviousState = this;
@@ -115,17 +114,25 @@ public class SelectAttackTargetState : IState
     {
         Collider2D col = Physics2D.OverlapPoint(player.transform.position, Constants.MASK_ENEMY_UNIT);
 
-        if (col != null && !hoverState)
+        if (col != null)
         {
+            TurnOffPreviousUnitInfo();
             enemyUnit = col.gameObject.GetComponent<EnemyUnit>();
             enemyUnit.TurnOnInfo();
-            hoverState = true;
+            previousEnemyUnit = enemyUnit;
         }
-        if (col == null && hoverState)
+        if (col == null)
         {
-            enemyUnit.TurnOffInfo();
-            hoverState = false;
+            enemyUnit?.TurnOffInfo();
+            enemyUnit?.TurnOffMovementRange();
         }
+    }
+
+    // Handles the case when hovering over a unit, an adjacent unit is hovered over. 
+    private void TurnOffPreviousUnitInfo()
+    {
+        previousEnemyUnit?.TurnOffInfo();
+        previousEnemyUnit?.TurnOffMovementRange();
     }
 }
 
