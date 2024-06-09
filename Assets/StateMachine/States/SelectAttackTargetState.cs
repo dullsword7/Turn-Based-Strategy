@@ -102,7 +102,7 @@ public class SelectAttackTargetState : IState
     }
     private IEnumerator AttackEnemyUnit(EnemyUnit enemy)
     {
-        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.MoveToPosition(enemy.transform.position));
+        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.TryMoveToPosition(enemy.transform.position));
         yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream"));
 
         Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
