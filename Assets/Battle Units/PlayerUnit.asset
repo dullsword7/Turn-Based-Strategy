@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BattleUnitName: Player
   baseStats:
-    Level: 0
+    Level: 1
     Health: 100
     Attack: 30
     Movement: 4

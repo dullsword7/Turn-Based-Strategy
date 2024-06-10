@@ -17,7 +17,7 @@ public class PlayerUnit : BattleUnit
     [SerializeField] private GameObject healthBarHolder;
     [SerializeField] private Image expBar;
 
-
+    private int currentLevel;
     private float healthStat;
     private float maxHealthStat;
     private float attackStat;
@@ -33,6 +33,7 @@ public class PlayerUnit : BattleUnit
     public override GameObject MovementRangeHolder { get => movementRangeHolder; set => movementRangeHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
     public override Image HealthBar { get => healthBar; set => healthBar = value; }
+    public override int CurrentLevel { get => currentLevel; set => currentLevel = value; }
     public override float MaxHealthStat { get => maxHealthStat; set => maxHealthStat = value; }
     public override float HealthStat { get => healthStat; set => healthStat = value; }
     public override float AttackStat { get => attackStat; set => attackStat = value; }
@@ -74,5 +75,4 @@ public class PlayerUnit : BattleUnit
 
         yield return null;
     }
-
 }

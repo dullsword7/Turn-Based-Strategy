@@ -20,6 +20,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract Image HealthBar { get; set; }
 
+    public abstract int CurrentLevel { get; set; }
     public abstract float MaxHealthStat { get; set; }
     public abstract float HealthStat { get; set; }
     public abstract float AttackStat { get; set; }
@@ -31,7 +32,6 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract BattleUnitInfo BattleUnitInfo { get; set; }
     public abstract BattleStats BaseStats { get; set; }
     public abstract BattleStats CurrentStats { get; set; }
-
 
     public void Start()
     {
@@ -48,16 +48,13 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public void InitializeBattleStats()
     {
         BaseStats = BattleUnitInfo.baseStats;
+        CurrentLevel = BaseStats.Level;
         MaxHealthStat = BaseStats.Health;
         HealthStat = MaxHealthStat;
         AttackStat = BaseStats.Attack;
         MovementStat = BaseStats.Movement;
 
-        string battleStatsString = $"{BattleUnitInfo.BattleUnitName}";
-        battleStatsString += $"\nHP: {HealthStat} / {MaxHealthStat}";
-        battleStatsString += $"\nATK: {AttackStat}";
-        battleStatsString += $"\nMOV: {MovementStat}";
-        UnitBattleStatsText.SetText(battleStatsString);
+        UpdateStats();
     }
 
     /// <summary>
@@ -339,7 +336,8 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         {
             float currentHp = Mathf.Lerp(healthBeforeDamage, healthAfterDamage, (elapsedTime / timer));
             HealthBar.fillAmount = currentHp / MaxHealthStat;
-            UpdateStats(Mathf.Round(currentHp));
+            HealthStat = Mathf.Round(currentHp);
+            UpdateStats();
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -352,12 +350,20 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// </summary>
     /// <param name="currentHealth">the new health value</param>
     /// <param name="battleUnit">reference to the BattleUnit type</param>
-    public void UpdateStats(float currentHealth)
+    public virtual void UpdateStats()
     {
-        string battleStatsString = $"{BattleUnitInfo.BattleUnitName}";
-        battleStatsString += $"\nHP: {currentHealth} / {MaxHealthStat}";
-        battleStatsString += $"\nATK: {AttackStat}";
-        battleStatsString += $"\nMOV: {MovementStat}";
+        string levelNameString = $"LVL {CurrentLevel} {BattleUnitInfo.BattleUnitName}";
+        string healthString = $"\nHP : {HealthStat} / {MaxHealthStat}";
+        string attackString = $"\nATK : {AttackStat}";
+        string movementString = $"\nMOV : {MovementStat}";
+
+        string battleStatsString =
+            levelNameString +
+            healthString +
+            attackString +
+            movementString;
+
+
         UnitBattleStatsText.SetText(battleStatsString);
     }
 

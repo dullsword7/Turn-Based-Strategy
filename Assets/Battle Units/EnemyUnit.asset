@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BattleUnitName: Enemy
   baseStats:
-    Level: 0
+    Level: 1
     Health: 20
     Attack: 5
     Movement: 5
-  EXPValueOnKill: 70
+  EXPValueOnKill: 1000
