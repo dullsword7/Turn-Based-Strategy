@@ -11,7 +11,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     private int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
     private int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
 
-    public Action<GameObject> BattleUnitDeath;
+    public Action<GameObject, BattleUnit> BattleUnitDeath;
 
     public abstract HashSet<Vector3> AllTilePositionsInMovementRange { get; set; }
     public abstract HashSet<Vector3> AllTilePositionsInAttackRange { get; set; }
@@ -24,6 +24,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract float HealthStat { get; set; }
     public abstract float AttackStat { get; set; }
     public abstract float MovementStat { get; set; }
+
     public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract GameObject MovementTile { get; set; }
     public abstract GameObject AttackTile { get; set; }
@@ -302,10 +303,9 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// BattleUnit receives damage, updates their hp values, and health bar visual.
     /// </summary>
     /// <param name="damageAmount">the amount of damage to recieve</param>
-    /// <param name="battleUnit">the BattleUnit receiving the damage</param>
-    /// <param name="onComplete">action invoked when coroutine completes</param>
+    /// <param name="attackingBattleUnit">the BattleUnit dealing the damage</param>
     /// <returns></returns>
-    public virtual IEnumerator ReceiveDamage(float damageAmount, BattleUnit battleUnit, Action onComplete = null)
+    public virtual IEnumerator ReceiveDamage(float damageAmount, BattleUnit attackingBattleUnit)
     {
         float healthBeforeDamage = HealthStat;
         float healthAfterDamage = HealthStat - damageAmount;
@@ -320,8 +320,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
         Debug.Log("Finished Updating Healthbar");
         yield return new WaitForSeconds(1f);
-        onComplete?.Invoke();
-        if (HealthStat <= 0) BattleUnitDeath?.Invoke(gameObject);
+        if (HealthStat <= 0) yield return StartCoroutine(HandleBattleUnitDeath(attackingBattleUnit));
     }
     
     /// <summary>
@@ -541,4 +540,6 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         float endY = endPosition.y;
         return MovementStat == Mathf.Abs(endX - startX) + Mathf.Abs(endY - startY);
     }
+
+    public abstract IEnumerator HandleBattleUnitDeath(BattleUnit attackingUnit);
 }

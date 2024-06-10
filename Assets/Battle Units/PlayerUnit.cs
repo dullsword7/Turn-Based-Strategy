@@ -15,6 +15,7 @@ public class PlayerUnit : BattleUnit
     [SerializeField] private TMP_Text unitBattleStatsText;
     [SerializeField] private Image healthBar;
     [SerializeField] private GameObject healthBarHolder;
+    [SerializeField] private Image expBar;
 
 
     private float healthStat;
@@ -43,7 +44,35 @@ public class PlayerUnit : BattleUnit
     public override BattleStats BaseStats { get => baseStats; set => baseStats = value; }
     public override BattleStats CurrentStats { get => currentStats; set => currentStats = value; }
 
+
+    public EXPHandler expHandler;
+    private float currentExp;
+    private float expToNextLevel;
+    public float CurrentExp { get => currentExp; set => currentExp = value; }
+    public float ExpToNextLevel { get => expToNextLevel; set => expToNextLevel = value; }
+    public Image ExpBar { get => expBar; set => expBar = value; }
+
     public GameObject UnitActionsPanel;
-    private void Awake() { }
+
+
+    private void Awake()
+    {
+        expHandler = new EXPHandler(this);
+        expToNextLevel = Constants.PLAYER_UNIT_EXP_TO_FIRST_LEVEL;
+    }
+
     private void OnDestroy() { }
+
+    /// <summary>
+    /// Makes the game object inactive once their health has reached 0.
+    /// </summary>
+    /// <param name="attackingBattleUnit">the BattleUnit that dealt the finishing blow</param>
+    public override IEnumerator HandleBattleUnitDeath(BattleUnit attackingBattleUnit)
+    {
+        Debug.Log("Game Over");
+        gameObject.SetActive(false);
+
+        yield return null;
+    }
+
 }

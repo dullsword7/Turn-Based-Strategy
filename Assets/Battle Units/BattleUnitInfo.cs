@@ -6,6 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public struct BattleStats
 {
+    public int Level;
     public int Health;
     public int Attack;
     public int Movement;
@@ -15,7 +16,7 @@ public struct BattleStats
 public class BattleUnitInfo : ScriptableObject
 {
     public string BattleUnitName;
-
     public BattleStats baseStats;
+    public float EXPValueOnKill;
 }
 

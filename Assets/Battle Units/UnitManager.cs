@@ -40,7 +40,12 @@ public class UnitManager : MonoBehaviour
         }
     }
 
-    public void DestroyBattleUnitOnDeath(GameObject gameObject)
+    /// <summary>
+    /// Makes a game object inactive once their health has reached 0.
+    /// </summary>
+    /// <param name="gameObject">the game object to make inactive</param>
+    /// <param name="attackingBattleUnit">the BattleUnit that dealt the finishing blow</param>
+    public void DestroyBattleUnitOnDeath(GameObject gameObject, BattleUnit attackingBattleUnit)
     {
         BattleUnit battleUnit = gameObject.GetComponent<BattleUnit>();
         if (battleUnit is PlayerUnit)
@@ -51,6 +56,9 @@ public class UnitManager : MonoBehaviour
         {
             Debug.Log("Enemy Unit Dead");
             enemyUnitList.Remove(battleUnit as EnemyUnit);
+
+            PlayerUnit playerUnit = attackingBattleUnit as PlayerUnit;
+            playerUnit.expHandler.UpdateExp(playerUnit, battleUnit.BattleUnitInfo.EXPValueOnKill);
         }
         gameObject.SetActive(false);
     }

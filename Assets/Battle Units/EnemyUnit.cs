@@ -42,8 +42,29 @@ public class EnemyUnit : BattleUnit
     public override BattleStats BaseStats { get => baseStats; set => baseStats = value; }
     public override BattleStats CurrentStats { get => currentStats; set => currentStats = value; }
 
+    /// <summary>
+    /// Checks if a PlayerUnit is in attack range.
+    /// </summary>
+    /// <param name="player">the PlayerUnit</param>
+    /// <returns>true if the player is in range, false otherwise</returns>
     public bool IsPlayerUnitInRange(PlayerUnit player)
     {
         return allTilePositionsInAttackRange.Contains(player.transform.position);
+    }
+
+    /// <summary>
+    /// Makes the game object inactive once their health has reached 0.
+    /// </summary>
+    /// <param name="attackingBattleUnit">the BattleUnit that dealt the finishing blow</param>
+    public override IEnumerator HandleBattleUnitDeath(BattleUnit attackingBattleUnit)
+    {
+        Debug.Log("Enemy Unit Dead");
+
+        //enemyUnitList.Remove(battleUnit as EnemyUnit);
+
+        PlayerUnit playerUnit = attackingBattleUnit as PlayerUnit;
+        yield return StartCoroutine(playerUnit.expHandler.UpdateExp(playerUnit, BattleUnitInfo.EXPValueOnKill));
+
+        gameObject.SetActive(false);
     }
 }

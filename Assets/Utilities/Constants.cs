@@ -14,4 +14,6 @@ public static class Constants
     public const string ORIGINAL_COLOR = "#FFFFFF";
     public const string DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR = "#FDCB6E";
     public const string SELECTED_UNIT_ACTION_UI_BUTTON_COLOR = "#FF7675";
+
+    public const float PLAYER_UNIT_EXP_TO_FIRST_LEVEL = 100f;
 }
