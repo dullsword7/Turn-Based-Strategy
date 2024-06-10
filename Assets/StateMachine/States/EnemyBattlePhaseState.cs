@@ -18,8 +18,6 @@ public class EnemyBattlePhaseState : IState
     {
         Debug.Log("Entering Enemy Battle Phase State");
 
-        // if all enemies are dead or if player is dead, return
-        if (player.UnitManager.enemyUnitList.Count == 0) player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState);
         player.StartCoroutine(ProcessEnemyUnitAttacks(waitForAllEnemyAttacksToFinish));
     }
 

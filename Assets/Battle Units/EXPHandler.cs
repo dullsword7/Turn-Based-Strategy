@@ -54,8 +54,6 @@ public class EXPHandler
         }
         playerUnit.ExpBar.fillAmount = expAfter / playerUnit.ExpToNextLevel;
 
-        Debug.Log($"Final Exp is {playerUnit.CurrentExp} / {playerUnit.ExpToNextLevel}");
-
         yield return new WaitForSeconds(1f);
         playerUnit.TurnOffInfo();
     }
@@ -63,6 +61,5 @@ public class EXPHandler
     private void AdjustExpRequiredForNextLevel()
     {
         playerUnit.ExpToNextLevel = Mathf.Round(playerUnit.ExpToNextLevel * 1.5f);
-        Debug.Log(playerUnit.ExpToNextLevel);
     }
 }

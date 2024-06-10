@@ -61,13 +61,7 @@ public class EnemyUnit : BattleUnit
     /// <param name="attackingBattleUnit">the BattleUnit that dealt the finishing blow</param>
     public override IEnumerator HandleBattleUnitDeath(BattleUnit attackingBattleUnit)
     {
-        Debug.Log("Enemy Unit Dead");
-
-        //enemyUnitList.Remove(battleUnit as EnemyUnit);
-
         PlayerUnit playerUnit = attackingBattleUnit as PlayerUnit;
         yield return StartCoroutine(playerUnit.expHandler.UpdateExp(playerUnit, BattleUnitInfo.EXPValueOnKill));
-
-        gameObject.SetActive(false);
     }
 }

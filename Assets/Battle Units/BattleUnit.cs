@@ -11,7 +11,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     private int playerUnitScream = Animator.StringToHash(animBaseLayer + ".PlayerUnitScream");
     private int enemyUnitScream = Animator.StringToHash(animBaseLayer + ".EnemyUnitScream");
 
-    public Action<GameObject, BattleUnit> BattleUnitDeath;
+    public Action<GameObject> BattleUnitDeath;
 
     public abstract HashSet<Vector3> AllTilePositionsInMovementRange { get; set; }
     public abstract HashSet<Vector3> AllTilePositionsInAttackRange { get; set; }
@@ -317,7 +317,11 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
         Debug.Log("Finished Updating Healthbar");
         yield return new WaitForSeconds(1f);
-        if (HealthStat <= 0) yield return StartCoroutine(HandleBattleUnitDeath(attackingBattleUnit));
+        if (HealthStat <= 0) 
+        {
+            yield return StartCoroutine(HandleBattleUnitDeath(attackingBattleUnit));
+            BattleUnitDeath?.Invoke(gameObject);
+        }
     }
     
     /// <summary>
