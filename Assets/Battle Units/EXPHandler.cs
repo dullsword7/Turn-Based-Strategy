@@ -29,13 +29,14 @@ public class EXPHandler
         {
             float currentExp = Mathf.Lerp(expBefore, expAfter, elapsedTime / timer);
 
-            if ( currentExp >= playerUnit.ExpToNextLevel) 
+            if (currentExp >= playerUnit.ExpToNextLevel) 
             {
                 expBefore = 0;
                 expAfter = expValue - playerUnit.ExpToNextLevel;
                 expValue -= playerUnit.ExpToNextLevel;
                 playerUnit.CurrentExp = 0;
                 playerUnit.BattleUnitStats[StatName.Level] += 1;
+                AdjustPlayerStatsOnLevelUp();
                 playerUnit.UpdateStats();
                 AdjustExpRequiredForNextLevel();
                 timer -= elapsedTime;
@@ -58,8 +59,27 @@ public class EXPHandler
         playerUnit.TurnOffInfo();
     }
 
+    /// <summary>
+    /// Adjusts the experience required to reach the next level when a player unit levels up.
+    /// </summary>
     private void AdjustExpRequiredForNextLevel()
     {
         playerUnit.ExpToNextLevel = Mathf.Round(playerUnit.ExpToNextLevel * 1.5f);
+    }
+
+    /// <summary>
+    /// Generates a number to check whether or not each stat should be increased based on the stat's growth rate.
+    /// </summary>
+    private void AdjustPlayerStatsOnLevelUp()
+    {
+        float statCheck = Random.Range(1, 100);
+
+        if (statCheck <= playerUnit.BattleUnitStatsGrowthRates[StatName.Health])
+        {
+            playerUnit.MaxHealthStat = Mathf.Round(playerUnit.MaxHealthStat * 1.1f);
+            playerUnit.BattleUnitStats[StatName.Health] = Mathf.Round(playerUnit.BattleUnitStats[StatName.Health] * 1.1f);
+        }
+        if (statCheck <= playerUnit.BattleUnitStatsGrowthRates[StatName.Attack])
+            playerUnit.BattleUnitStats[StatName.Attack] = Mathf.Round(playerUnit.BattleUnitStats[StatName.Attack] * 1.1f);
     }
 }

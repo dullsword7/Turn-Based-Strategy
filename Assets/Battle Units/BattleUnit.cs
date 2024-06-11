@@ -28,6 +28,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract BattleUnitInfo BattleUnitInfo { get; set; }
     public virtual List<Stat> BattleUnitBaseStats { get; set; }
     public virtual Dictionary<StatName, float> BattleUnitStats { get; set; }
+    public virtual Dictionary<StatName, float> BattleUnitStatsGrowthRates { get; set; }
 
     public bool TryMovementSucess;
 
@@ -44,11 +45,16 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public void InitializeBattleStats()
     {
         BattleUnitStats = new Dictionary<StatName, float>();
+        BattleUnitStatsGrowthRates = new Dictionary<StatName, float>();
         BattleUnitBaseStats = BattleUnitInfo.BattleStatsList;
 
         foreach (Stat stat in BattleUnitInfo.BattleStatsList)
         {
             BattleUnitStats.Add(stat.statName, stat.statValue);
+        }
+        foreach (Stat stat in BattleUnitInfo.BattleStatsList)
+        {
+            BattleUnitStatsGrowthRates.Add(stat.statName, stat.statGrowth);
         }
 
         MaxHealthStat = BattleUnitStats[StatName.Health];

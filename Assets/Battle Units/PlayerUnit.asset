@@ -17,9 +17,13 @@ MonoBehaviour:
   BattleStatsList:
   - statName: 0
     statValue: 1
+    statGrowth: 0
   - statName: 1
     statValue: 100
+    statGrowth: 100
   - statName: 2
     statValue: 30
+    statGrowth: 100
   - statName: 3
     statValue: 5
+    statGrowth: 0

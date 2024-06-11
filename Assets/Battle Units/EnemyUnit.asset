@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: EnemyUnit
   m_EditorClassIdentifier: 
   BattleUnitName: Enemy
-  EXPValueOnKill: 200
+  EXPValueOnKill: 20000
   BattleStatsList:
   - statName: 0
     statValue: 1
+    statGrowth: 0
   - statName: 1
-    statValue: 40
+    statValue: 20
+    statGrowth: 0
   - statName: 2
     statValue: 5
+    statGrowth: 0
   - statName: 3
     statValue: 6
+    statGrowth: 0

@@ -9,6 +9,7 @@ public class Stat
 {
     public StatName statName;
     public float statValue;
+    public float statGrowth;
 }
 
 public enum StatName
