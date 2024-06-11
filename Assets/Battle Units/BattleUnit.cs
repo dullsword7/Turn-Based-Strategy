@@ -20,17 +20,16 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract Image HealthBar { get; set; }
 
-    public abstract float CurrentLevel { get; set; }
     public abstract float MaxHealthStat { get; set; }
-    public abstract float HealthStat { get; set; }
-    public abstract float AttackStat { get; set; }
-    public abstract float MovementStat { get; set; }
 
     public abstract TMP_Text UnitBattleStatsText { get; set; }
     public abstract GameObject MovementTile { get; set; }
     public abstract GameObject AttackTile { get; set; }
     public abstract BattleUnitInfo BattleUnitInfo { get; set; }
+    public virtual List<Stat> BattleUnitBaseStats { get; set; }
     public virtual Dictionary<StatName, float> BattleUnitStats { get; set; }
+
+    public bool TryMovementSucess;
 
     public void Start()
     {
@@ -45,6 +44,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public void InitializeBattleStats()
     {
         BattleUnitStats = new Dictionary<StatName, float>();
+        BattleUnitBaseStats = BattleUnitInfo.BattleStatsList;
 
         foreach (Stat stat in BattleUnitInfo.BattleStatsList)
         {
@@ -127,16 +127,13 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         graph = Helpers.ValidMovementPositionsToAdjacencyList(transform.position, AllTilePositionsInMovementRange);
         List<Vector3> path = Helpers.BFS(graph, transform.position, endPosition);
 
-        if (Constants.ENABLE_MOVEMENT_PATH_DEBUGGING)
+        //foreach (Vector3 position in AllTilePositionsInMovementRange)
+        //{
+        //    SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
+        //}
+        foreach (Vector3 position in path)
         {
-            foreach (Vector3 position in AllTilePositionsInMovementRange)
-            {
-                SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
-            }
-            //foreach (Vector3 position in path)
-            //{
-            //    SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
-            //}
+            SpriteFactory.Instance.InstantiateSkillSprite("Movement Path", position, Vector3.zero);
         }
 
         return path;
@@ -158,10 +155,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         // if the attacker is already adjacent to its target, dont move
         if (transform.position == pos1 || transform.position == pos2 || transform.position == pos3 || transform.position == pos4) return transform.position;
 
-        if (AllTilePositionsInMovementRange.Contains(pos1) && CheckTilePositionEmpty(pos1)) attackPositions.Add(pos1);
-        if (AllTilePositionsInMovementRange.Contains(pos2) && CheckTilePositionEmpty(pos2)) attackPositions.Add(pos2);
-        if (AllTilePositionsInMovementRange.Contains(pos3) && CheckTilePositionEmpty(pos3)) attackPositions.Add(pos3);
-        if (AllTilePositionsInMovementRange.Contains(pos4) && CheckTilePositionEmpty(pos4)) attackPositions.Add(pos4);
+        if (AllTilePositionsInMovementRange.Contains(pos1) && CheckTilePositionContainsAllyUnit(pos1)) attackPositions.Add(pos1);
+        if (AllTilePositionsInMovementRange.Contains(pos2) && CheckTilePositionContainsAllyUnit(pos2)) attackPositions.Add(pos2);
+        if (AllTilePositionsInMovementRange.Contains(pos3) && CheckTilePositionContainsAllyUnit(pos3)) attackPositions.Add(pos3);
+        if (AllTilePositionsInMovementRange.Contains(pos4) && CheckTilePositionContainsAllyUnit(pos4)) attackPositions.Add(pos4);
 
         if (attackPositions.Count == 0) return attackTargetPosition;
 
@@ -187,10 +184,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
             return attackPositions;
         }
 
-        if (AllTilePositionsInMovementRange.Contains(pos1) && CheckTilePositionEmpty(pos1)) attackPositions.Add(pos1);
-        if (AllTilePositionsInMovementRange.Contains(pos2) && CheckTilePositionEmpty(pos2)) attackPositions.Add(pos2);
-        if (AllTilePositionsInMovementRange.Contains(pos3) && CheckTilePositionEmpty(pos3)) attackPositions.Add(pos3);
-        if (AllTilePositionsInMovementRange.Contains(pos4) && CheckTilePositionEmpty(pos4)) attackPositions.Add(pos4);
+        if (AllTilePositionsInMovementRange.Contains(pos1) && CheckNoBattleUnitOnTile(pos1)) attackPositions.Add(pos1);
+        if (AllTilePositionsInMovementRange.Contains(pos2) && CheckNoBattleUnitOnTile(pos2)) attackPositions.Add(pos2);
+        if (AllTilePositionsInMovementRange.Contains(pos3) && CheckNoBattleUnitOnTile(pos3)) attackPositions.Add(pos3);
+        if (AllTilePositionsInMovementRange.Contains(pos4) && CheckNoBattleUnitOnTile(pos4)) attackPositions.Add(pos4);
 
         return attackPositions;
     }
@@ -220,11 +217,15 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         List<Vector3> path = CalculateMovementPath(targetPosition);
 
         // should return immediately if there is no path
-        if (path.Count < 1)
+        if (path.Count < 1 || validPositions.Count < 1)
         {
+            TryMovementSucess = false;
             Debug.Log("No path to destination found, canceling movement");
+            yield return new WaitForSeconds(1f);
             yield break;
         }
+
+        TryMovementSucess = true;
 
         for (int i = 0; i < path.Count - 1; i++)
         {
@@ -423,10 +424,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         Vector3 pos4 = startingPosition + Vector3.right;
 
 
-        if (CheckTilePositionEmpty(pos1)) res.Add(pos1);
-        if (CheckTilePositionEmpty(pos2)) res.Add(pos2);
-        if (CheckTilePositionEmpty(pos3)) res.Add(pos3);
-        if (CheckTilePositionEmpty(pos4)) res.Add(pos4);
+        if (CheckTilePositionContainsAllyUnit(pos1)) res.Add(pos1);
+        if (CheckTilePositionContainsAllyUnit(pos2)) res.Add(pos2);
+        if (CheckTilePositionContainsAllyUnit(pos3)) res.Add(pos3);
+        if (CheckTilePositionContainsAllyUnit(pos4)) res.Add(pos4);
 
         return res;
     }
@@ -452,10 +453,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
                 Vector3 pos3 = position + Vector3.left;
                 Vector3 pos4 = position + Vector3.right;
 
-                if (CheckTilePositionEmpty(pos1)) newValidPositions.Add(pos1);
-                if (CheckTilePositionEmpty(pos2)) newValidPositions.Add(pos2);
-                if (CheckTilePositionEmpty(pos3)) newValidPositions.Add(pos3);
-                if (CheckTilePositionEmpty(pos4)) newValidPositions.Add(pos4);
+                if (CheckTilePositionContainsAllyUnit(pos1)) newValidPositions.Add(pos1);
+                if (CheckTilePositionContainsAllyUnit(pos2)) newValidPositions.Add(pos2);
+                if (CheckTilePositionContainsAllyUnit(pos3)) newValidPositions.Add(pos3);
+                if (CheckTilePositionContainsAllyUnit(pos4)) newValidPositions.Add(pos4);
             }
 
             AllTilePositionsInMovementRange.UnionWith(newValidPositions);
@@ -510,11 +511,22 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     }
 
     /// <summary>
-    /// Checks if the current tile position is occupied. 
+    /// Checks if the current tile position is empty.
     /// </summary>
     /// <param name="position">the position to check</param>
-    /// <returns>true if tile is empty, false if tile is not empty</returns>
-    private bool CheckTilePositionEmpty(Vector3 position)
+    /// <returns>true if no battle unit is found</returns>
+    private bool CheckNoBattleUnitOnTile(Vector3 position)
+    {
+        Collider2D col = Physics2D.OverlapPoint(position, Constants.MASK_BATTLE_UNIT);
+        return col == null;
+    }
+
+    /// <summary>
+    /// Checks if the current tile position is occupied by an ally unit. 
+    /// </summary>
+    /// <param name="position">the position to check</param>
+    /// <returns>true if tile is contains an ally, false if tile contains an enemy unit</returns>
+    private bool CheckTilePositionContainsAllyUnit(Vector3 position)
     {
         LayerMask sameObjectLayerMask = 1 << gameObject.layer;
         Collider2D objectNotInSameLayer = Physics2D.OverlapPoint(position, ~sameObjectLayerMask);
