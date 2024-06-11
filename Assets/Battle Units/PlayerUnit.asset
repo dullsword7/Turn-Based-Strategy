@@ -13,9 +13,13 @@ MonoBehaviour:
   m_Name: PlayerUnit
   m_EditorClassIdentifier: 
   BattleUnitName: Player
-  baseStats:
-    Level: 1
-    Health: 100
-    Attack: 30
-    Movement: 4
   EXPValueOnKill: 0
+  BattleStatsList:
+  - statName: 0
+    statValue: 1
+  - statName: 1
+    statValue: 100
+  - statName: 2
+    statValue: 30
+  - statName: 3
+    statValue: 5

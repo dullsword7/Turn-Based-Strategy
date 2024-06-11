@@ -35,7 +35,7 @@ public class EXPHandler
                 expAfter = expValue - playerUnit.ExpToNextLevel;
                 expValue -= playerUnit.ExpToNextLevel;
                 playerUnit.CurrentExp = 0;
-                playerUnit.CurrentLevel += 1;
+                playerUnit.BattleUnitStats[StatName.Level] += 1;
                 playerUnit.UpdateStats();
                 AdjustExpRequiredForNextLevel();
                 timer -= elapsedTime;

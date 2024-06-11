@@ -20,7 +20,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract GameObject HealthBarHolder { get; set; }
     public abstract Image HealthBar { get; set; }
 
-    public abstract int CurrentLevel { get; set; }
+    public abstract float CurrentLevel { get; set; }
     public abstract float MaxHealthStat { get; set; }
     public abstract float HealthStat { get; set; }
     public abstract float AttackStat { get; set; }
@@ -30,8 +30,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public abstract GameObject MovementTile { get; set; }
     public abstract GameObject AttackTile { get; set; }
     public abstract BattleUnitInfo BattleUnitInfo { get; set; }
-    public abstract BattleStats BaseStats { get; set; }
-    public abstract BattleStats CurrentStats { get; set; }
+    public virtual Dictionary<StatName, float> BattleUnitStats { get; set; }
 
     public void Start()
     {
@@ -47,12 +46,14 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// </summary>
     public void InitializeBattleStats()
     {
-        BaseStats = BattleUnitInfo.baseStats;
-        CurrentLevel = BaseStats.Level;
-        MaxHealthStat = BaseStats.Health;
-        HealthStat = MaxHealthStat;
-        AttackStat = BaseStats.Attack;
-        MovementStat = BaseStats.Movement;
+        BattleUnitStats = new Dictionary<StatName, float>();
+
+        foreach (Stat stat in BattleUnitInfo.BattleStatsList)
+        {
+            BattleUnitStats.Add(stat.statName, stat.statValue);
+        }
+
+        MaxHealthStat = BattleUnitStats[StatName.Health];
 
         UpdateStats();
     }
@@ -304,20 +305,20 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <returns></returns>
     public virtual IEnumerator ReceiveDamage(float damageAmount, BattleUnit attackingBattleUnit)
     {
-        float healthBeforeDamage = HealthStat;
-        float healthAfterDamage = HealthStat - damageAmount;
+        float healthBeforeDamage = BattleUnitStats[StatName.Health];
+        float healthAfterDamage = BattleUnitStats[StatName.Health] - damageAmount;
         if (healthAfterDamage <= 0)
         {
-            HealthStat = 0;
+            BattleUnitStats[StatName.Health] = 0;
             healthAfterDamage = 0;
         }
-        HealthStat -= damageAmount;
+        BattleUnitStats[StatName.Health] -= damageAmount;
 
         yield return StartCoroutine(UpdateHealthBar(healthBeforeDamage, healthAfterDamage));
 
         Debug.Log("Finished Updating Healthbar");
         yield return new WaitForSeconds(1f);
-        if (HealthStat <= 0) 
+        if (BattleUnitStats[StatName.Health] <= 0) 
         {
             yield return StartCoroutine(HandleBattleUnitDeath(attackingBattleUnit));
             BattleUnitDeath?.Invoke(gameObject);
@@ -340,7 +341,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         {
             float currentHp = Mathf.Lerp(healthBeforeDamage, healthAfterDamage, (elapsedTime / timer));
             HealthBar.fillAmount = currentHp / MaxHealthStat;
-            HealthStat = Mathf.Round(currentHp);
+            BattleUnitStats[StatName.Health] = Mathf.Round(currentHp);
             UpdateStats();
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -356,10 +357,10 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <param name="battleUnit">reference to the BattleUnit type</param>
     public virtual void UpdateStats()
     {
-        string levelNameString = $"LVL {CurrentLevel} {BattleUnitInfo.BattleUnitName}";
-        string healthString = $"\nHP : {HealthStat} / {MaxHealthStat}";
-        string attackString = $"\nATK : {AttackStat}";
-        string movementString = $"\nMOV : {MovementStat}";
+        string levelNameString = $"LVL {BattleUnitStats[StatName.Level]} {BattleUnitInfo.BattleUnitName}";
+        string healthString = $"\nHP : {BattleUnitStats[StatName.Health]} / {MaxHealthStat}";
+        string attackString = $"\nATK : {BattleUnitStats[StatName.Attack]}";
+        string movementString = $"\nMOV : {BattleUnitStats[StatName.Movement]}";
 
         string battleStatsString =
             levelNameString +
@@ -394,7 +395,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         HashSet<Vector3> res = new HashSet<Vector3>();
         res.Add(startingPosition);
 
-        if (MovementStat == 0) return res;
+        if (BattleUnitStats[StatName.Movement] == 0) return res;
 
         Vector3 pos1 = startingPosition + Vector3.up;
         Vector3 pos2 = startingPosition + Vector3.down;
@@ -418,7 +419,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     private void calculateValidMovementPositions(int counter, HashSet<Vector3> validPositions)
     {
         HashSet<Vector3> newValidPositions = new HashSet<Vector3>();
-        if (counter >= MovementStat)
+        if (counter >= BattleUnitStats[StatName.Movement])
         {
             return;
         }
@@ -548,7 +549,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         float startY = startPosition.y; 
         float endX = endPosition.x; 
         float endY = endPosition.y;
-        return MovementStat == Mathf.Abs(endX - startX) + Mathf.Abs(endY - startY);
+        return BattleUnitStats[StatName.Movement] == Mathf.Abs(endX - startX) + Mathf.Abs(endY - startY);
     }
 
     public abstract IEnumerator HandleBattleUnitDeath(BattleUnit attackingUnit);

@@ -17,15 +17,13 @@ public class PlayerUnit : BattleUnit
     [SerializeField] private GameObject healthBarHolder;
     [SerializeField] private Image expBar;
 
-    private int currentLevel;
+    private float currentLevel;
     private float healthStat;
     private float maxHealthStat;
     private float attackStat;
     private float movementStat;
     private HashSet<Vector3> allTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInAttackRange;
-    private BattleStats baseStats;
-    private BattleStats currentStats;
 
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
@@ -33,7 +31,7 @@ public class PlayerUnit : BattleUnit
     public override GameObject MovementRangeHolder { get => movementRangeHolder; set => movementRangeHolder = value; }
     public override GameObject HealthBarHolder { get => healthBarHolder; set => healthBarHolder = value; }
     public override Image HealthBar { get => healthBar; set => healthBar = value; }
-    public override int CurrentLevel { get => currentLevel; set => currentLevel = value; }
+    public override float CurrentLevel { get => currentLevel; set => currentLevel = value; }
     public override float MaxHealthStat { get => maxHealthStat; set => maxHealthStat = value; }
     public override float HealthStat { get => healthStat; set => healthStat = value; }
     public override float AttackStat { get => attackStat; set => attackStat = value; }
@@ -42,8 +40,6 @@ public class PlayerUnit : BattleUnit
     public override GameObject MovementTile { get => movementTile; set => movementTile = value; }
     public override GameObject AttackTile { get => attackTile; set => attackTile = value; }
     public override BattleUnitInfo BattleUnitInfo { get => playerUnitInfo; set => playerUnitInfo = value; }
-    public override BattleStats BaseStats { get => baseStats; set => baseStats = value; }
-    public override BattleStats CurrentStats { get => currentStats; set => currentStats = value; }
 
 
     public EXPHandler expHandler;

@@ -1,22 +1,31 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-[System.Serializable]
-public struct BattleStats
+
+[Serializable]
+public class Stat
 {
-    public int Level;
-    public int Health;
-    public int Attack;
-    public int Movement;
+    public StatName statName;
+    public float statValue;
+}
+
+public enum StatName
+{
+    Level,
+    Health,
+    Attack,
+    Movement
 }
 
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/BattleStatsScriptableObject", order = 1)]
 public class BattleUnitInfo : ScriptableObject
 {
     public string BattleUnitName;
-    public BattleStats baseStats;
     public float EXPValueOnKill;
+
+    public List<Stat> BattleStatsList;
+
 }
 
