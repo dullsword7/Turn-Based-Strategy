@@ -18,6 +18,7 @@ public class EnemyToPlayerTurnState : IState
     public void Enter()
     {
         player.EnemyToPlayerTurnTransition.SetActive(true);
+        player.PlayerUnit.UpdateAttackAndMovementRange(player.PlayerUnit.transform.position);
         transitionText = player.EnemyToPlayerTurnTransition.GetComponent<TextMeshProUGUI>();
         transitionText.fontSize = 1; 
         timer = timeOut;

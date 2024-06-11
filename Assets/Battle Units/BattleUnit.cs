@@ -35,9 +35,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public void Start()
     {
         InitializeBattleStats();
-        InitializeAttackAndMovementRange(transform.position);
-        SetUpMovementRangeIndicator();
-        SetUpAttackRangeIndicator();
+        UpdateAttackAndMovementRange(transform.position);
         MovementRangeHolder.SetActive(false);
 
     }
@@ -94,6 +92,27 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         {
             Instantiate(MovementTile, position, Quaternion.identity, MovementRangeHolder.transform);
         }
+    }
+
+    /// <summary>
+    /// Destroys all children of the MovementRangeHolder
+    /// </summary>
+    public void ClearMovementRangeIndicator()
+    {
+        foreach (Transform child in MovementRangeHolder.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    /// <summary>
+    /// Updates the visuals of a BattleUnit's attack and movement range.
+    /// </summary>
+    public void UpdateAttackAndMovementRangeIndicator()
+    {
+        ClearMovementRangeIndicator();
+        SetUpMovementRangeIndicator();
+        SetUpAttackRangeIndicator();
     }
 
     /// <summary>
@@ -184,7 +203,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <returns></returns>
     public virtual IEnumerator TryMoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
     {
-        InitializeAttackAndMovementRange(transform.position);
+        UpdateAttackAndMovementRange(transform.position);
 
         List<Vector3> validPositions = AllValidAttackPosition(attackTargetPosition);
 
@@ -377,12 +396,13 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// Initializes AllTilePositionsInAttackRange with all tiles attackable from current position.
     /// </summary>
     /// <param name="startPosition">the current position</param>
-    public void InitializeAttackAndMovementRange(Vector3 startPosition)
+    public void UpdateAttackAndMovementRange(Vector3 startPosition)
     {
         startPosition = new Vector3(startPosition.x, startPosition.y, 0);
         AllTilePositionsInMovementRange = initializeValidPositions(transform.position);
         calculateValidMovementPositions(1, AllTilePositionsInMovementRange);
         AllTilePositionsInAttackRange = calculateTilesInAttackRange(AllTilePositionsInMovementRange);
+        UpdateAttackAndMovementRangeIndicator();
     }
 
     /// <summary>
