@@ -386,12 +386,16 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         string levelNameString = $"LVL {BattleUnitStats[StatName.Level]} {BattleUnitInfo.BattleUnitName}";
         string healthString = $"\nHP : {BattleUnitStats[StatName.Health]} / {MaxHealthStat}";
         string attackString = $"\nATK : {BattleUnitStats[StatName.Attack]}";
+        string defenseString = $"\nDEF : {BattleUnitStats[StatName.Defense]}";
+        string speedString = $"\nSPD : {BattleUnitStats[StatName.Speed]}";
         string movementString = $"\nMOV : {BattleUnitStats[StatName.Movement]}";
 
         string battleStatsString =
             levelNameString +
             healthString +
             attackString +
+            defenseString +
+            speedString +
             movementString;
 
 

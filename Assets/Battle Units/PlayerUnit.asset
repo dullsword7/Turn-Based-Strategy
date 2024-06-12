@@ -22,7 +22,7 @@ MonoBehaviour:
     statValue: 100
     statGrowth: 100
   - statName: 2
-    statValue: 1
+    statValue: 30
     statGrowth: 100
   - statName: 3
     statValue: 5

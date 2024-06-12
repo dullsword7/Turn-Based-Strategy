@@ -59,7 +59,7 @@ public class BattleResultHandler
     /// </summary>
     public void SetBattleResultText()
     {
-        battleResultText.SetText($"{currentAttackingUnit.BattleUnitInfo.BattleUnitName} VS {currentDefendingUnit.BattleUnitInfo.BattleUnitName}");
+        battleResultText.SetText($"{DetermineDamageToTarget()}");
     }
 
     /// <summary>
@@ -68,7 +68,13 @@ public class BattleResultHandler
     public void SetUnitAttackCountText()
     {
         float attackCount = DetermineNumberOfAttacks();
-        if (attackCount > 1) unitAttackCount.SetText($"X {attackCount}");
+        if (attackCount > 1) {
+            unitAttackCount.SetText($"X {attackCount}");
+        }
+        else
+        {
+            unitAttackCount.SetText($"");
+        }
     }
 
     /// <summary>
@@ -112,12 +118,24 @@ public class BattleResultHandler
     /// Calculates the number of times the attacking unit will attack.
     /// </summary>
     /// <returns>the number of times to attack</returns>
-    private int DetermineNumberOfAttacks()
+    public int DetermineNumberOfAttacks()
     {
         float attackingUnitSpeed = currentAttackingUnit.BattleUnitStats[StatName.Speed];
         float defendingUnitSpeed = currentDefendingUnit.BattleUnitStats[StatName.Speed];
         if (attackingUnitSpeed > defendingUnitSpeed * 2) return 2;
 
         return 1;
+    }
+
+    /// <summary>
+    /// Calculates the amount of damage the attacking unit will deal to the defending unit.
+    /// </summary>
+    /// <returns>the amount of damage to deal</returns>
+    public float DetermineDamageToTarget()
+    {
+        float attackingUnitAttack = currentAttackingUnit.BattleUnitStats[StatName.Attack];
+        float defendingUnitDefense = currentDefendingUnit.BattleUnitStats[StatName.Defense];
+
+        return attackingUnitAttack - defendingUnitDefense;
     }
 }

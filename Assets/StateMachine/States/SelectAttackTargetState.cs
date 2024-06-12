@@ -103,11 +103,19 @@ public class SelectAttackTargetState : IState
     private IEnumerator AttackEnemyUnit(EnemyUnit enemy)
     {
         yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.TryMoveToPosition(enemy.transform.position));
-        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream"));
+        if (!player.PlayerUnit.TryMovementSucess) yield break;
 
-        Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
-        SpriteFactory.Instance.InstantiateSkillSprite("Slash", enemy.transform.position, direction);
-        yield return enemy.StartCoroutine(enemy.ReceiveDamage(player.PlayerUnit.BattleUnitStats[StatName.Attack], player.PlayerUnit));
+        for (int i = 0; i < player.BattleResultHandler.DetermineNumberOfAttacks(); i++)
+        {
+            if (player.UnitManager.enemyUnitList.Contains(enemy))
+            {
+                yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.StartAndWaitForAnimation("PlayerUnitScream"));
+                Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
+                SpriteFactory.Instance.InstantiateSkillSprite("Slash", enemy.transform.position, direction);
+                yield return enemy.StartCoroutine(enemy.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), player.PlayerUnit));
+            } 
+        }
+
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.attackSuccessfulState); 
         yield return null;
     }

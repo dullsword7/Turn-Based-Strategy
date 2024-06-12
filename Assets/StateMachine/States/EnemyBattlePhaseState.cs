@@ -36,13 +36,14 @@ public class EnemyBattlePhaseState : IState
             Debug.Log("Attacking player unit");
             player.BattleResultHandler.SetCurrentAttackingUnit(enemy);
             player.BattleResultHandler.SetCurrentDefendingUnit(player.PlayerUnit);
-            yield return player.StartCoroutine(AttackTarget(enemy, enemy.BattleUnitStats[StatName.Attack]));
+            player.BattleResultHandler.UpdateBattleResultCanvas();
+            yield return player.StartCoroutine(AttackTarget(enemy));
             enemy.ChangeColorToIndicateBattleUnitTurnOver();
         }
         onComplete?.Invoke();
         yield return null;
     }
-    private IEnumerator AttackTarget(EnemyUnit enemyUnit, float damage)
+    private IEnumerator AttackTarget(EnemyUnit enemyUnit)
     {
         player.PlayerUnit.TurnOffMovementRange();
         player.PlayerUnit.TurnOnInfo();
@@ -53,12 +54,13 @@ public class EnemyBattlePhaseState : IState
         if (!enemyUnit.IsPlayerUnitInRange(player.PlayerUnit)) yield break;
 
         player.BattleResultHandler.TurnOnBattleResultCanvas();
-
-        yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
-        Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
-        SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(damage, enemyUnit));
-
+        for (int i = 0; i < player.BattleResultHandler.DetermineNumberOfAttacks(); i++)
+        {
+            yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
+            Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
+            SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
+            yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), enemyUnit));
+        }
         player.BattleResultHandler.TurnOffBattleResultCanvas();
     }
     public void Update() { }
