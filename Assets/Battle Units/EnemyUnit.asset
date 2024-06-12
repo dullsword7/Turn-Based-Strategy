@@ -28,8 +28,8 @@ MonoBehaviour:
     statValue: 6
     statGrowth: 0
   - statName: 4
-    statValue: 6
-    statGrowth: 0
+    statValue: 1
+    statGrowth: 1
   - statName: 5
     statValue: 6
     statGrowth: 0
