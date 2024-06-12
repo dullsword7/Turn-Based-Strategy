@@ -17,6 +17,8 @@ public enum StatName
     Level,
     Health,
     Attack,
+    Defense,
+    Speed,
     Movement
 }
 

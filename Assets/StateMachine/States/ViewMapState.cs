@@ -115,6 +115,7 @@ public class ViewMapState : IState
             if (col != null)
             {
                 playerUnit = col.gameObject.GetComponent<PlayerUnit>();
+                player.BattleResultHandler.SetCurrentAttackingUnit(playerUnit);
                 player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUnitActionState);
             }
         }

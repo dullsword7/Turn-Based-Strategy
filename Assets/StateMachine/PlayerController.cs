@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,8 +15,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject enemyToPlayerTurnTransition;
     [SerializeField] private UnitManager unitManager;
 
+    [SerializeField] private GameObject battleResultHolder;
+    [SerializeField] private GameObject attackingUnit;
+    [SerializeField] private GameObject battleResult;
+    [SerializeField] private TMP_Text unitAttackCount;
+    [SerializeField] private GameObject defendingUnit;
+
     private StateMachine playerStateMachine;
     private List<GameObject> enemyUnitList;
+    private BattleResultHandler battleResultHandler;
 
     public PlayerUnit PlayerUnit;
     public StateMachine PlayerStateMachine => playerStateMachine;
@@ -25,10 +33,12 @@ public class PlayerController : MonoBehaviour
     public GameObject PlayerToEnemyTurnTransition => playerToEnemyTurnTransition;
     public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
     public UnitManager UnitManager => unitManager;
+    public BattleResultHandler BattleResultHandler => battleResultHandler;
+
     private void Awake()
     {
         playerStateMachine = new StateMachine(this);
-        
+        battleResultHandler = new BattleResultHandler(battleResultHolder, attackingUnit, battleResult, unitAttackCount, defendingUnit);
     }
     // Start is called before the first frame update
     void Start()

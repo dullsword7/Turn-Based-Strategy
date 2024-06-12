@@ -43,6 +43,7 @@ public class SelectAttackTargetState : IState
     {
         enemyUnit?.TurnOffInfo();
         lockControls = false;
+        player.BattleResultHandler.TurnOffBattleResultCanvas();
 
         player.PlayerStateMachine.PreviousState = this;
     }
@@ -119,12 +120,17 @@ public class SelectAttackTargetState : IState
             TurnOffPreviousUnitInfo();
             enemyUnit = col.gameObject.GetComponent<EnemyUnit>();
             enemyUnit.TurnOnInfo();
+
+            player.BattleResultHandler.SetCurrentDefendingUnit(enemyUnit);
+            player.BattleResultHandler.TurnOnBattleResultCanvas();
+
             previousEnemyUnit = enemyUnit;
         }
         if (col == null)
         {
             enemyUnit?.TurnOffInfo();
             enemyUnit?.TurnOffMovementRange();
+            player.BattleResultHandler.TurnOffBattleResultCanvas();
         }
     }
 
