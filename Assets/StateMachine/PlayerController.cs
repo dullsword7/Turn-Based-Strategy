@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject enemyToPlayerTurnTransition;
     [SerializeField] private UnitManager unitManager;
 
+    [SerializeField] private GameObject gameOverCanvas;
+
     [SerializeField] private GameObject battleResultHolder;
     [SerializeField] private GameObject attackingUnit;
     [SerializeField] private GameObject battleResult;
@@ -33,6 +35,7 @@ public class PlayerController : MonoBehaviour
     public GameObject PlayerToEnemyTurnTransition => playerToEnemyTurnTransition;
     public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
     public UnitManager UnitManager => unitManager;
+    public GameObject GameOverCanvas => gameOverCanvas;
     public BattleResultHandler BattleResultHandler => battleResultHandler;
 
     private void Awake()

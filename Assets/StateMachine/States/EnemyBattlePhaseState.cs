@@ -27,18 +27,28 @@ public class EnemyBattlePhaseState : IState
     }
     private void AllEnemyAttacksCompleted()
     {
-        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState);
+        if (player.UnitManager.AllPlayerUnitsDead())
+        {
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+        }
+        else
+        {
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyToPlayerTurnState);
+        }
     }
     private IEnumerator ProcessEnemyUnitAttacks(Action onComplete)
     {
         foreach (EnemyUnit enemy in player.UnitManager.enemyUnitList)
         {
-            Debug.Log("Attacking player unit");
-            player.BattleResultHandler.SetCurrentAttackingUnit(enemy);
-            player.BattleResultHandler.SetCurrentDefendingUnit(player.PlayerUnit);
-            player.BattleResultHandler.UpdateBattleResultCanvas();
-            yield return player.StartCoroutine(AttackTarget(enemy));
-            enemy.ChangeColorToIndicateBattleUnitTurnOver();
+            if (player.UnitManager.playerUnitList.Count != 0)
+            {
+                Debug.Log("Attacking player unit");
+                player.BattleResultHandler.SetCurrentAttackingUnit(enemy);
+                player.BattleResultHandler.SetCurrentDefendingUnit(player.PlayerUnit);
+                player.BattleResultHandler.UpdateBattleResultCanvas();
+                yield return player.StartCoroutine(AttackTarget(enemy));
+                enemy.ChangeColorToIndicateBattleUnitTurnOver();
+            }
         }
         onComplete?.Invoke();
         yield return null;
@@ -56,10 +66,14 @@ public class EnemyBattlePhaseState : IState
         player.BattleResultHandler.TurnOnBattleResultCanvas();
         for (int i = 0; i < player.BattleResultHandler.DetermineNumberOfAttacks(); i++)
         {
-            yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
-            Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
-            SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-            yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), enemyUnit));
+            if (player.UnitManager.playerUnitList.Contains(player.PlayerUnit))
+            {
+                yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
+                Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
+                SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
+                yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), enemyUnit));
+            }
+
         }
         player.BattleResultHandler.TurnOffBattleResultCanvas();
     }

@@ -58,9 +58,8 @@ public class PlayerUnit : BattleUnit
     /// <param name="attackingBattleUnit">the BattleUnit that dealt the finishing blow</param>
     public override IEnumerator HandleBattleUnitDeath(BattleUnit attackingBattleUnit)
     {
-        Debug.Log("Game Over");
-        gameObject.SetActive(false);
-
+        //Debug.Log("Game Over");
+        //gameObject.SetActive(false);
         yield return null;
     }
 }
