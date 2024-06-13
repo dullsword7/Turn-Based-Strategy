@@ -62,24 +62,28 @@ public class ViewMapState : IState
         if (Input.GetKey(KeyCode.UpArrow))
         {
             player.transform.Translate(Vector2.up);
+            CheckValidPosition(Vector2.up);
             HoverOverUnit();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             player.transform.Translate(Vector2.left);
+            CheckValidPosition(Vector2.left);
             HoverOverUnit();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
             player.transform.Translate(Vector2.down);
+            CheckValidPosition(Vector2.down);
             HoverOverUnit();
             timer = timeoutLength;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             player.transform.Translate(Vector2.right);
+            CheckValidPosition(Vector2.right);
             HoverOverUnit();
             timer = timeoutLength;
         }
@@ -143,5 +147,9 @@ public class ViewMapState : IState
             PlayerUnit playerUnit = previousBattleUnit as PlayerUnit;
             playerUnit.TurnOffMovementRange();
         }
+    }
+    private void CheckValidPosition(Vector2 direction)
+    {
+        if (!player.CheckCursorInBounds()) player.transform.Translate(direction * -1);
     }
 }
