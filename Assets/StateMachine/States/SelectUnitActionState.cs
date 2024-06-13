@@ -50,7 +50,14 @@ public class SelectUnitActionState : IState
             player.PlayerUnit.TurnOffMovementRange();
         }
 
-
+        Color color;
+        ColorUtility.TryParseHtmlString(Constants.DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR, out color);
+        foreach (GameObject gameObject in player.PlayerUnit.UnitActionMenuButtons)
+        {
+            gameObject.GetComponent<Image>().color = color;
+            
+        }
+        
         player.PlayerStateMachine.PreviousState = this;
     }
     private void HandleMenuCursorInput()

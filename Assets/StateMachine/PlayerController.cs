@@ -37,12 +37,14 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        playerStateMachine = new StateMachine(this);
-        battleResultHandler = new BattleResultHandler(battleResultHolder, attackingUnit, battleResult, unitAttackCount, defendingUnit);
     }
     // Start is called before the first frame update
     void Start()
     {
+        // playerStateMachine needs to be placed in Start() so that UnitManager can find all player and enemy objects in Awake() before anything else happens
+        playerStateMachine = new StateMachine(this);
+        battleResultHandler = new BattleResultHandler(battleResultHolder, attackingUnit, battleResult, unitAttackCount, defendingUnit);
+
         playerStateMachine.Initialize(playerStateMachine.viewMapState);
     }
 
@@ -53,13 +55,17 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            string currentSceneName = SceneManager.GetActiveScene().name;
-            SceneManager.LoadScene(currentSceneName);
+            ReloadScene();
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             QuitGame();
         }
+    }
+    public void ReloadScene()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentSceneName);
     }
     public void QuitGame()
     {
