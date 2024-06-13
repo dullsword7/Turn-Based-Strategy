@@ -26,6 +26,11 @@ public class PlayerToEnemyTurnState : IState
         transitionText.fontSize = 1; 
         timer = timeOut;
         transitionTimer = 1f;
+
+        foreach (BattleUnit battleUnit in player.UnitManager.playerUnitList)
+        {
+            battleUnit.ChangeColorToIndicateBattleUnitTurnOver();
+        }
     }
 
     public void Exit()
