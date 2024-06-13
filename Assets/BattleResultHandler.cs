@@ -136,6 +136,7 @@ public class BattleResultHandler
         float attackingUnitAttack = currentAttackingUnit.BattleUnitStats[StatName.Attack];
         float defendingUnitDefense = currentDefendingUnit.BattleUnitStats[StatName.Defense];
 
-        return attackingUnitAttack - defendingUnitDefense;
+        // if defense stat is higher than attack stat, deal 0 damage, otherwise deal def - atk dmg
+        return attackingUnitAttack - defendingUnitDefense < 0 ? 0 : attackingUnitAttack - defendingUnitDefense;
     }
 }
