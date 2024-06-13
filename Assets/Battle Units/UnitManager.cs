@@ -11,6 +11,7 @@ public class UnitManager : MonoBehaviour
     public List<PlayerUnit> playerUnitList;
     public List<GameObject> enemies;
     public List<GameObject> playerUnits;
+    public List<PlayerUnit> playerUnitsWithActionsLeft;
 
     [SerializeField] private GameObject gameOverCanvas;
     private Action gameOver;
@@ -40,8 +41,9 @@ public class UnitManager : MonoBehaviour
             playerUnit.BattleUnitDeath += DestroyBattleUnitOnDeath;
         }
 
-        gameOver += GameOver;
+        playerUnitsWithActionsLeft = new List<PlayerUnit>(playerUnitList);
 
+        gameOver += GameOver;
     }
 
     // need to unsubscribe each enemy and player unit from DestoyBattleUnitOnDeath
@@ -89,6 +91,34 @@ public class UnitManager : MonoBehaviour
         return enemyUnitList.Count == 0;
     }
 
+    /// <summary>
+    /// Checks if there are any player units with actions left.
+    /// </summary>
+    /// <returns>true if no player units can act, false otherwise</returns>
+    public bool NoPlayerUnitsWithActionsLeft()
+    {
+        foreach (PlayerUnit playerUnit in playerUnitsWithActionsLeft)
+        {
+            // if a player unit with an action left exists
+            if (!playerUnit.noMoreActions) return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Allows each player unit to act again.
+    /// </summary>
+    public void ResetPlayerUnitActions()
+    {
+        foreach (PlayerUnit playerUnit in playerUnitsWithActionsLeft)
+        {
+            playerUnit.noMoreActions = false;
+        }
+    }
+
+    /// <summary>
+    /// Fades in the game over canvas if all player units are dead.
+    /// </summary>
     public void GameOver()
     {
         Debug.Log("Game Over");

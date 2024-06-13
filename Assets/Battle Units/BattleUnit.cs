@@ -32,7 +32,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
 
     public bool TryMovementSucess;
 
-    public void Start()
+    public void Awake()
     {
         InitializeBattleStats();
         UpdateAttackAndMovementRange(transform.position);
@@ -114,7 +114,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <summary>
     /// Updates the visuals of a BattleUnit's attack and movement range.
     /// </summary>
-    public void UpdateAttackAndMovementRangeIndicator()
+    private void UpdateAttackAndMovementRangeIndicator()
     {
         ClearMovementRangeIndicator();
         SetUpMovementRangeIndicator();

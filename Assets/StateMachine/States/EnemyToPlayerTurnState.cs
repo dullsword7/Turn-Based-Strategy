@@ -17,6 +17,8 @@ public class EnemyToPlayerTurnState : IState
     }
     public void Enter()
     {
+        player.UnitManager.ResetPlayerUnitActions();
+
         player.EnemyToPlayerTurnTransition.SetActive(true);
         player.PlayerUnit.UpdateAttackAndMovementRange(player.PlayerUnit.transform.position);
         transitionText = player.EnemyToPlayerTurnTransition.GetComponent<TextMeshProUGUI>();
@@ -28,6 +30,16 @@ public class EnemyToPlayerTurnState : IState
     public void Exit()
     {
         player.EnemyToPlayerTurnTransition.SetActive(false);
+        player.PlayerStateMachine.PreviousState = this;
+
+        foreach (BattleUnit battleUnit in player.UnitManager.playerUnitList)
+        {
+            battleUnit.RestoreBattleUnitOriginalColor();
+        }
+        foreach (BattleUnit battleUnit in player.UnitManager.enemyUnitList)
+        {
+            battleUnit.RestoreBattleUnitOriginalColor();
+        }
     }
 
     public void Update()

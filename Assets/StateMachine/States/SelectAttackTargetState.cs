@@ -113,8 +113,12 @@ public class SelectAttackTargetState : IState
                 Vector3 direction = enemy.transform.position - player.PlayerUnit.transform.position;
                 SpriteFactory.Instance.InstantiateSkillSprite("Slash", enemy.transform.position, direction);
                 yield return enemy.StartCoroutine(enemy.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), player.PlayerUnit));
+
             } 
         }
+
+        player.PlayerUnit.noMoreActions = true;
+        player.PlayerUnit.ChangeColorToIndicateBattleUnitTurnOver();
 
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.attackSuccessfulState); 
         yield return null;

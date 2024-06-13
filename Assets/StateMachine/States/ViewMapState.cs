@@ -23,12 +23,20 @@ public class ViewMapState : IState
     public void Enter()
     {
         Debug.Log("Entering ViewMapState");
-        player.PlayerUnit?.TurnOffMovementRange();
-        player.PlayerUnit?.TurnOffInfo();
 
-        foreach (BattleUnit battleUnit in player.UnitManager.enemyUnitList)
+        if (player.PlayerStateMachine.PreviousState != player.PlayerStateMachine.selectUnitActionState)
         {
-            battleUnit.RestoreBattleUnitOriginalColor();
+            player.PlayerUnit?.TurnOffMovementRange();
+            player.PlayerUnit?.TurnOffInfo();
+        }
+
+        foreach (PlayerUnit playerUnit in player.UnitManager.playerUnitList)
+        {
+            playerUnit.UpdateAttackAndMovementRange(playerUnit.transform.position);
+        }
+        foreach (EnemyUnit enemyUnit in player.UnitManager.enemyUnitList)
+        {
+            enemyUnit.UpdateAttackAndMovementRange(enemyUnit.transform.position);
         }
     }
     public void Update()
@@ -107,6 +115,10 @@ public class ViewMapState : IState
             }
         }
     }
+
+    /// <summary>
+    /// Pressing Z selects the Player unit at the current position.
+    /// </summary>
     private void HandleUnitSelection()
     {
         if (Input.GetKeyDown(KeyCode.Z))
@@ -115,6 +127,7 @@ public class ViewMapState : IState
             if (col != null)
             {
                 playerUnit = col.gameObject.GetComponent<PlayerUnit>();
+                if (playerUnit.noMoreActions) return;
                 player.BattleResultHandler.SetCurrentAttackingUnit(playerUnit);
                 player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUnitActionState);
             }

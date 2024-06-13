@@ -12,7 +12,14 @@ public class AttackSuccessfulState : IState
     public void Enter()
     {
         Debug.Log("Entering Attack Sucessful State");
-        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);
+        if (player.UnitManager.NoPlayerUnitsWithActionsLeft())
+        {
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);
+        }
+        else
+        {
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+        }
     }
     public void Exit()
     {

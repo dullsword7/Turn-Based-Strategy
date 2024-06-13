@@ -21,6 +21,9 @@ public class PlayerUnit : BattleUnit
     private HashSet<Vector3> allTilePositionsInMovementRange;
     private HashSet<Vector3> allTilePositionsInAttackRange;
 
+    private float currentExp;
+    private float expToNextLevel;
+
     public override HashSet<Vector3> AllTilePositionsInMovementRange { get => allTilePositionsInMovementRange; set => allTilePositionsInMovementRange = value; }
     public override HashSet<Vector3> AllTilePositionsInAttackRange { get => allTilePositionsInAttackRange; set => allTilePositionsInAttackRange = value; }
     public override GameObject UnitBattleStatsHolder { get => unitBattleStatsHolder; set => unitBattleStatsHolder = value; }
@@ -35,16 +38,18 @@ public class PlayerUnit : BattleUnit
 
 
     public EXPHandler expHandler;
-    private float currentExp;
-    private float expToNextLevel;
+
     public float CurrentExp { get => currentExp; set => currentExp = value; }
     public float ExpToNextLevel { get => expToNextLevel; set => expToNextLevel = value; }
     public Image ExpBar { get => expBar; set => expBar = value; }
 
     public GameObject UnitActionsPanel;
+    public List<GameObject> UnitActionMenuButtons;
+
+    public bool noMoreActions;
 
 
-    private void Awake()
+    private void Start()
     {
         expHandler = new EXPHandler(this);
         expToNextLevel = Constants.PLAYER_UNIT_EXP_TO_FIRST_LEVEL;
@@ -58,8 +63,6 @@ public class PlayerUnit : BattleUnit
     /// <param name="attackingBattleUnit">the BattleUnit that dealt the finishing blow</param>
     public override IEnumerator HandleBattleUnitDeath(BattleUnit attackingBattleUnit)
     {
-        //Debug.Log("Game Over");
-        //gameObject.SetActive(false);
         yield return null;
     }
 }

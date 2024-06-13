@@ -13,16 +13,20 @@ public class SelectUnitActionState : IState
     {
         this.player = player;
         timeoutLength = 0.2f;
-        InitializeButtonEvents();
+
+        foreach (PlayerUnit playerUnit in player.UnitManager.playerUnitList)
+        {
+            InitializeButtonEvents(playerUnit);
+        }
     }
     public void Enter()
     {
         Debug.Log("Entering SelectUnitActionState");
-        player.UnitActionMenu.SetActive(true);
+        player.PlayerUnit.UnitActionsPanel.SetActive(true);
 
         Color color;
         ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
-        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
+        player.PlayerUnit.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
     }
     public void Update()
     {
@@ -39,7 +43,7 @@ public class SelectUnitActionState : IState
     public void Exit()
     {
         Debug.Log("Exiting SelectUnitActionState");
-        player.UnitActionMenu.SetActive(false);
+        player.PlayerUnit.UnitActionsPanel.SetActive(false);
 
         if (player.transform.position != player.PlayerUnit.transform.position)
         {
@@ -64,7 +68,7 @@ public class SelectUnitActionState : IState
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Button>().onClick.Invoke();
+            player.PlayerUnit.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Button>().onClick.Invoke();
         }
         if (Input.GetKeyDown(KeyCode.X))
         {
@@ -76,25 +80,25 @@ public class SelectUnitActionState : IState
     {
         Color color;
         ColorUtility.TryParseHtmlString(Constants.DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR, out color);
-        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
+        player.PlayerUnit.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
         currentMenuButtonIndex += 1;
-        if (currentMenuButtonIndex >= player.UnitActionMenuButtons.Count) currentMenuButtonIndex = 0;
+        if (currentMenuButtonIndex >= player.PlayerUnit.UnitActionMenuButtons.Count) currentMenuButtonIndex = 0;
         ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
-        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
+        player.PlayerUnit.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
     }
 
     private void PreviousMenuButton()
     {
         Color color;
         ColorUtility.TryParseHtmlString(Constants.DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR, out color);
-        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
+        player.PlayerUnit.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
         currentMenuButtonIndex -= 1;
-        if (currentMenuButtonIndex < 0) currentMenuButtonIndex = player.UnitActionMenuButtons.Count - 1;
+        if (currentMenuButtonIndex < 0) currentMenuButtonIndex = player.PlayerUnit.UnitActionMenuButtons.Count - 1;
         ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
-        player.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
+        player.PlayerUnit.UnitActionMenuButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
     }
 
-    private void InitializeButtonEvents()
+    private void InitializeButtonEvents(PlayerUnit player)
     {
         foreach (GameObject go in player.UnitActionMenuButtons)
         {
@@ -104,7 +108,7 @@ public class SelectUnitActionState : IState
     private void SetupButtonEventListeners(GameObject go)
     {
         if (go.name == "AttackButton")
-        { 
+        {
             go.GetComponent<Button>().onClick.AddListener(OnAttackButtonClicked);
         }
         else if (go.name == "ItemButton")
@@ -134,6 +138,6 @@ public class SelectUnitActionState : IState
     }
     private void OnEndTurnButtonClicked()
     {
-        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);
     }
 }

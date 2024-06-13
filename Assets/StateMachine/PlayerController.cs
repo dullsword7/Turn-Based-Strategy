@@ -24,14 +24,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject defendingUnit;
 
     private StateMachine playerStateMachine;
-    private List<GameObject> enemyUnitList;
     private BattleResultHandler battleResultHandler;
 
     public PlayerUnit PlayerUnit;
     public StateMachine PlayerStateMachine => playerStateMachine;
     public GameObject SelectUnitActionCursor => selectUnitActionCursor;
-    public GameObject UnitActionMenu => unitActionMenu;
-    public List<GameObject> UnitActionMenuButtons => unitActionMenuButtons;
     public GameObject PlayerToEnemyTurnTransition => playerToEnemyTurnTransition;
     public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
     public UnitManager UnitManager => unitManager;
