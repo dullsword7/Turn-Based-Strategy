@@ -52,4 +52,46 @@ public class EnemyUnit : BattleUnit
         PlayerUnit playerUnit = attackingBattleUnit as PlayerUnit;
         yield return StartCoroutine(playerUnit.expHandler.UpdateExp(playerUnit, BattleUnitInfo.EXPValueOnKill));
     }
+
+    /// <summary>
+    /// Finds the position of the closest player unit.
+    /// </summary>
+    /// <param name="playerController">the playerController</param>
+    /// <returns>the position of the closest player unit</returns>
+    public Vector3 PositionOfClosestPlayerUnit(PlayerController playerController)
+    {
+        Vector3 currentClosestPlayerUnitPosition = transform.position;
+        float smallestDistance = float.MaxValue;
+        foreach (PlayerUnit playerUnit in playerController.UnitManager.playerUnitList)
+        {
+            float currentDistance = Vector3.Distance(playerUnit.transform.position, transform.position);
+            if (currentDistance < smallestDistance)
+            {
+                smallestDistance = currentDistance;
+                currentClosestPlayerUnitPosition = playerUnit.transform.position;
+            }
+        }
+        return currentClosestPlayerUnitPosition;
+    }
+
+    /// <summary>
+    /// Finds the closest player unit.
+    /// </summary>
+    /// <param name="playerController">the playerController</param>
+    /// <returns>the closest player unit</returns>
+    public PlayerUnit ClosestPlayerUnit(PlayerController playerController)
+    {
+        PlayerUnit closestPlayerUnit = playerController.PlayerUnit;
+        float smallestDistance = float.MaxValue;
+        foreach (PlayerUnit playerUnit in playerController.UnitManager.playerUnitList)
+        {
+            float currentDistance = Vector3.Distance(playerUnit.transform.position, transform.position);
+            if (currentDistance < smallestDistance)
+            {
+                smallestDistance = currentDistance;
+                closestPlayerUnit = playerUnit;
+            }
+        }
+        return closestPlayerUnit;
+    }
 }

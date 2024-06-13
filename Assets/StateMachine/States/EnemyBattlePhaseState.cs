@@ -18,6 +18,9 @@ public class EnemyBattlePhaseState : IState
     {
         Debug.Log("Entering Enemy Battle Phase State");
 
+        player.PlayerUnit.TurnOffInfo();
+        player.PlayerUnit.TurnOffMovementRange();
+
         player.StartCoroutine(ProcessEnemyUnitAttacks(waitForAllEnemyAttacksToFinish));
     }
 
@@ -55,23 +58,26 @@ public class EnemyBattlePhaseState : IState
     }
     private IEnumerator AttackTarget(EnemyUnit enemyUnit)
     {
-        player.PlayerUnit.TurnOffMovementRange();
-        player.PlayerUnit.TurnOnInfo();
-        yield return enemyUnit.StartCoroutine(enemyUnit.TryMoveToPosition(player.PlayerUnit.transform.position));
+
+        Vector3 targetPosition = enemyUnit.PositionOfClosestPlayerUnit(player);
+        PlayerUnit targetPlayerUnit = enemyUnit.ClosestPlayerUnit(player);
+        targetPlayerUnit.TurnOnInfo();
+
+        yield return enemyUnit.StartCoroutine(enemyUnit.TryMoveToPosition(targetPosition));
         if (!enemyUnit.TryMovementSucess) yield break;
 
         // if the playerUnit is not within enemyUnit's attack range
-        if (!enemyUnit.IsPlayerUnitInRange(player.PlayerUnit)) yield break;
+        if (!enemyUnit.IsPlayerUnitInRange(targetPlayerUnit)) yield break;
 
         player.BattleResultHandler.TurnOnBattleResultCanvas();
         for (int i = 0; i < player.BattleResultHandler.DetermineNumberOfAttacks(); i++)
         {
-            if (player.UnitManager.playerUnitList.Contains(player.PlayerUnit))
+            if (player.UnitManager.playerUnitList.Contains(targetPlayerUnit))
             {
                 yield return enemyUnit.StartCoroutine(enemyUnit.StartAndWaitForAnimation("EnemyUnitScream"));
-                Vector3 direction = player.PlayerUnit.transform.position - enemyUnit.transform.position;
-                SpriteFactory.Instance.InstantiateSkillSprite("Slash", player.PlayerUnit.transform.position, direction);
-                yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), enemyUnit));
+                Vector3 direction = targetPosition - enemyUnit.transform.position;
+                SpriteFactory.Instance.InstantiateSkillSprite("Slash", targetPosition, direction);
+                yield return targetPlayerUnit.StartCoroutine(targetPlayerUnit.ReceiveDamage(player.BattleResultHandler.DetermineDamageToTarget(), enemyUnit));
             }
 
         }
