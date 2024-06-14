@@ -43,6 +43,10 @@ public class SelectMovePositionState : IState
         if (Input.GetKeyDown(KeyCode.X)) player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUnitActionState);
         if (Input.GetKeyDown(KeyCode.Z)) MovePositionSelected();
     }
+
+    /// <summary>
+    /// Handles all player input.
+    /// </summary>
     private void HandlePlayerMovement()
     {
         if (Input.GetKey(KeyCode.UpArrow))
@@ -70,6 +74,10 @@ public class SelectMovePositionState : IState
             timer = timeoutLength;
         }
     }
+
+    /// <summary>
+    /// When a tile has been selected, moves to that tile.
+    /// </summary>
     private void MovePositionSelected()
     {
         Collider2D col = Physics2D.OverlapPoint(player.transform.position);
@@ -81,6 +89,11 @@ public class SelectMovePositionState : IState
             player.StartCoroutine(MoveToPosition());
         }
     }
+
+    /// <summary>
+    /// Moves to the selected position and marks the unit's turn as completed.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator MoveToPosition()
     {
         yield return player.StartCoroutine(player.PlayerUnit.TryMoveToPosition(player.transform.position));
@@ -94,6 +107,11 @@ public class SelectMovePositionState : IState
             yield break;
         }
     }
+
+    /// <summary>
+    /// Checks if the player input will be outside the select unit's movement range. If it is, then undo the movement.
+    /// </summary>
+    /// <param name="direction">the opposite direction to send the player cursor</param>
     private void CheckValidPosition(Vector2 direction)
     {
         if (player.PlayerUnit == null) return;
