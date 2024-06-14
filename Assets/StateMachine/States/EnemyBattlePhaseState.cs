@@ -63,7 +63,7 @@ public class EnemyBattlePhaseState : IState
         PlayerUnit targetPlayerUnit = enemyUnit.ClosestPlayerUnit(player);
         targetPlayerUnit.TurnOnInfo();
 
-        yield return enemyUnit.StartCoroutine(enemyUnit.TryMoveToPosition(targetPosition));
+        yield return enemyUnit.StartCoroutine(enemyUnit.TryMoveToAttackPosition(targetPosition));
         if (!enemyUnit.TryMovementSucess) yield break;
 
         // if the playerUnit is not within enemyUnit's attack range

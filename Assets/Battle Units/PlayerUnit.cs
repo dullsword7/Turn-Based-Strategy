@@ -65,4 +65,13 @@ public class PlayerUnit : BattleUnit
     {
         yield return null;
     }
+
+    /// <summary>
+    /// Completes an individual player unit's turn.
+    /// </summary>
+    public void UnitHasCompletedAllActions()
+    {
+        noMoreActions = true;
+        this.ChangeColorToIndicateBattleUnitTurnOver();
+    }
 }

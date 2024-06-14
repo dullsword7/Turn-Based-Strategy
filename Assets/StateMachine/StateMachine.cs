@@ -9,6 +9,7 @@ public class StateMachine
     public ViewMapState viewMapState;
     public SelectUnitActionState selectUnitActionState;
     public SelectAttackTargetState selectAttackTargetState;
+    public SelectMovePositionState selectMovePositionState;
     public AttackSuccessfulState attackSuccessfulState;
     public EnemyBattlePhaseState enemyBattlePhaseState;
     public PlayerToEnemyTurnState playerToEnemyTurnState;
@@ -19,6 +20,7 @@ public class StateMachine
         this.viewMapState = new ViewMapState(player);
         this.selectUnitActionState = new SelectUnitActionState(player);
         this.selectAttackTargetState = new SelectAttackTargetState(player);
+        this.selectMovePositionState = new SelectMovePositionState(player);
         this.attackSuccessfulState = new AttackSuccessfulState(player);
         this.enemyBattlePhaseState = new EnemyBattlePhaseState(player);
         this.playerToEnemyTurnState = new PlayerToEnemyTurnState(player);

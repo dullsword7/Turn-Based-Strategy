@@ -38,6 +38,11 @@ public class ViewMapState : IState
         {
             enemyUnit.UpdateAttackAndMovementRange(enemyUnit.transform.position);
         }
+
+        if (player.UnitManager.NoPlayerUnitsWithActionsLeft())
+        {
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyBattlePhaseState);
+        }
     }
     public void Update()
     {

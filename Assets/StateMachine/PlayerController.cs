@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
         leftBound = mainCamera.ViewportToWorldPoint(new Vector3(.02f, .02f, 0));
         rightBound = mainCamera.ViewportToWorldPoint(new Vector3(.98f, 0, 0));
         topBound = mainCamera.ViewportToWorldPoint(new Vector3(0, .98f, 0));
-        bottomBound = mainCamera.ViewportToWorldPoint(new Vector3(.02f, 0, 0));
+        bottomBound = mainCamera.ViewportToWorldPoint(new Vector3(.02f, .02f, 0));
 
     }
     void OnDrawGizmos()
@@ -116,14 +116,24 @@ public class PlayerController : MonoBehaviour
     {
         if (Camera.main.orthographicSize >= 10) return;
         Camera.main.orthographicSize += 1;
-        transform.position = originalPosition;
+        ResetCursorPosition();
     }
     public void ZoomInCamera()
     {
         if (Camera.main.orthographicSize <= 5) return;
         Camera.main.orthographicSize -= 1;
-        transform.position = originalPosition;
-
+        ResetCursorPosition();
+    }
+    public void ResetCursorPosition()
+    {
+        if (PlayerUnit != null)
+        {
+            transform.position = PlayerUnit.transform.position;
+        }
+        else
+        {
+            transform.position = originalPosition;
+        }
     }
     public void ReloadScene()
     {

@@ -9,5 +9,5 @@ public interface IBattleUnit
     public void InitializeBattleStats();
     public IEnumerator ReceiveDamage(float damageAmount, BattleUnit battleUnit);
     public Vector3 ClosestValidAttackPosition(Vector3 attackTargetPosition);
-    public IEnumerator TryMoveToPosition(Vector3 attackTargetPosition, Action onComplete = null);
+    public IEnumerator TryMoveToAttackPosition(Vector3 attackTargetPosition, Action onComplete = null);
 }

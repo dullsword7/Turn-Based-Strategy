@@ -118,6 +118,10 @@ public class SelectUnitActionState : IState
         {
             go.GetComponent<Button>().onClick.AddListener(OnAttackButtonClicked);
         }
+        else if (go.name == "MoveButton")
+        {
+            go.GetComponent<Button>().onClick.AddListener(OnMoveButtonClicked);
+        }
         else if (go.name == "ItemButton")
         {
             go.GetComponent<Button>().onClick.AddListener(OnItemButtonClicked);
@@ -135,12 +139,17 @@ public class SelectUnitActionState : IState
     {
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectAttackTargetState);
     }
+    private void OnMoveButtonClicked() 
+    {
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectMovePositionState);
+    }
     private void OnItemButtonClicked()
     {
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
     }
     private void OnWaitButtonClicked()
     {
+        player.PlayerUnit.UnitHasCompletedAllActions();
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
     }
     private void OnEndTurnButtonClicked()

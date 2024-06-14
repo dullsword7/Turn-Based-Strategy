@@ -12,7 +12,7 @@ public class SelectAttackTargetState : IState
     private EnemyUnit enemyUnit;
     private bool lockControls;
 
-    EnemyUnit previousEnemyUnit;
+    private EnemyUnit previousEnemyUnit;
     public SelectAttackTargetState(PlayerController player)
     {
         this.player = player;
@@ -102,7 +102,7 @@ public class SelectAttackTargetState : IState
     }
     private IEnumerator AttackEnemyUnit(EnemyUnit enemy)
     {
-        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.TryMoveToPosition(enemy.transform.position));
+        yield return player.PlayerUnit.StartCoroutine(player.PlayerUnit.TryMoveToAttackPosition(enemy.transform.position));
         if (!player.PlayerUnit.TryMovementSucess) yield break;
 
         for (int i = 0; i < player.BattleResultHandler.DetermineNumberOfAttacks(); i++)
@@ -117,8 +117,7 @@ public class SelectAttackTargetState : IState
             } 
         }
 
-        player.PlayerUnit.noMoreActions = true;
-        player.PlayerUnit.ChangeColorToIndicateBattleUnitTurnOver();
+        player.PlayerUnit.UnitHasCompletedAllActions();
 
         player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.attackSuccessfulState); 
         yield return null;

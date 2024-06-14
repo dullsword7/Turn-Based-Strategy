@@ -204,7 +204,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     /// <param name="attackTargetPosition">the position of the target</param>
     /// <param name="onComplete">action invoked when coroutine completes</param>
     /// <returns></returns>
-    public virtual IEnumerator TryMoveToPosition(Vector3 attackTargetPosition, Action onComplete = null)
+    public virtual IEnumerator TryMoveToAttackPosition(Vector3 attackTargetPosition, Action onComplete = null)
     {
         UpdateAttackAndMovementRange(transform.position);
 
@@ -241,6 +241,38 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
         yield return new WaitForSeconds(1f);
         onComplete?.Invoke();
     }
+
+    /// <summary>
+    /// Checks for a valid position around the attack target, if one is found then move there.
+    /// </summary>
+    /// <param name="targetDestination">the position of the target</param>
+    /// <param name="onComplete">action invoked when coroutine completes</param>
+    /// <returns></returns>
+    public virtual IEnumerator TryMoveToPosition(Vector3 targetDestination)
+    {
+        UpdateAttackAndMovementRange(transform.position);
+
+        List<Vector3> path = CalculateMovementPath(targetDestination);
+
+        // should return immediately if there is no path
+        if (path.Count < 1)
+        {
+            TryMovementSucess = false;
+            Debug.Log("No path to destination found, canceling movement");
+            yield return new WaitForSeconds(1f);
+            yield break;
+        }
+
+        TryMovementSucess = true;
+
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            yield return StartCoroutine(MoveAlongPath(path[i], path[i + 1]));
+        }
+
+        yield return new WaitForSeconds(1f);
+    }
+
     /// <summary>
     /// BattleUnit will lerp its positions from one position to another.
     /// </summary>
