@@ -40,10 +40,12 @@ public class PlayerController : MonoBehaviour
     private Vector3 rightBound;
     private Vector3 topBound;
     private Vector3 bottomBound;
+    private Vector3 originalPosition;
 
     private void Awake()
     {
         mainCamera = Camera.main;
+        originalPosition = transform.position;
         CalculateCursorBounds();
     }
     // Start is called before the first frame update
@@ -97,25 +99,14 @@ public class PlayerController : MonoBehaviour
     }
     public void CalculateCursorBounds()
     {
-        leftBound = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, 0));
-        rightBound = mainCamera.ViewportToWorldPoint(new Vector3(1, 0, 0));
-        topBound = mainCamera.ViewportToWorldPoint(new Vector3(0, 1, 0));
-        bottomBound = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, 0));
+        leftBound = mainCamera.ViewportToWorldPoint(new Vector3(.02f, .02f, 0));
+        rightBound = mainCamera.ViewportToWorldPoint(new Vector3(.98f, 0, 0));
+        topBound = mainCamera.ViewportToWorldPoint(new Vector3(0, .98f, 0));
+        bottomBound = mainCamera.ViewportToWorldPoint(new Vector3(.02f, 0, 0));
 
     }
     void OnDrawGizmos()
     {
-        //float verticalHeightSeen = Camera.main.orthographicSize * 2.0f;
-        //float verticalWidthSeen = verticalHeightSeen * Camera.main.aspect;
-
-        //Gizmos.color = Color.cyan;
-        //Gizmos.DrawWireCube(Camera.main.transform.position, new Vector3(verticalWidthSeen, verticalHeightSeen, 0));
-
-        Camera camera = Camera.main;
-        Vector3 p = camera.ViewportToWorldPoint(new Vector3(1, 1, camera.nearClipPlane));
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(p, 0.1F);
-
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(leftBound, .2f);
         Gizmos.DrawSphere(rightBound, .2f);
@@ -125,11 +116,14 @@ public class PlayerController : MonoBehaviour
     {
         if (Camera.main.orthographicSize >= 10) return;
         Camera.main.orthographicSize += 1;
+        transform.position = originalPosition;
     }
     public void ZoomInCamera()
     {
         if (Camera.main.orthographicSize <= 5) return;
         Camera.main.orthographicSize -= 1;
+        transform.position = originalPosition;
+
     }
     public void ReloadScene()
     {
