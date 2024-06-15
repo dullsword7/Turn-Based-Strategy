@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private UnitManager unitManager;
 
     [SerializeField] private GameObject gameOverCanvas;
+    [SerializeField] private GameObject selectUpgradeScreen;
+    [SerializeField] private List<GameObject> selectUpgradeButtons;
 
     [SerializeField] private GameObject battleResultHolder;
     [SerializeField] private GameObject attackingUnit;
@@ -33,6 +35,8 @@ public class PlayerController : MonoBehaviour
     public GameObject EnemyToPlayerTurnTransition => enemyToPlayerTurnTransition;
     public UnitManager UnitManager => unitManager;
     public GameObject GameOverCanvas => gameOverCanvas;
+    public GameObject SelectUpgradeScreen => selectUpgradeScreen;
+    public List<GameObject> SelectUpgradeButtons => selectUpgradeButtons;
     public BattleResultHandler BattleResultHandler => battleResultHandler;
 
     private Camera mainCamera;
@@ -55,7 +59,7 @@ public class PlayerController : MonoBehaviour
         playerStateMachine = new StateMachine(this);
         battleResultHandler = new BattleResultHandler(battleResultHolder, attackingUnit, battleResult, unitAttackCount, defendingUnit);
 
-        playerStateMachine.Initialize(playerStateMachine.viewMapState);
+        playerStateMachine.Initialize(playerStateMachine.selectUpgradeState);
     }
 
     // Update is called once per frame

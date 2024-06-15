@@ -14,6 +14,7 @@ public class StateMachine
     public EnemyBattlePhaseState enemyBattlePhaseState;
     public PlayerToEnemyTurnState playerToEnemyTurnState;
     public EnemyToPlayerTurnState enemyToPlayerTurnState;
+    public SelectUpgradeState selectUpgradeState;
 
     public StateMachine(PlayerController player)
     {
@@ -25,6 +26,7 @@ public class StateMachine
         this.enemyBattlePhaseState = new EnemyBattlePhaseState(player);
         this.playerToEnemyTurnState = new PlayerToEnemyTurnState(player);
         this.enemyToPlayerTurnState = new EnemyToPlayerTurnState(player);
+        this.selectUpgradeState = new SelectUpgradeState(player);
     }
     public void Initialize(IState startingState)
     {
