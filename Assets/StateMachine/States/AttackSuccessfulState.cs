@@ -12,6 +12,11 @@ public class AttackSuccessfulState : IState
     public void Enter()
     {
         Debug.Log("Entering Attack Sucessful State");
+        if (player.UnitManager.AllEnemyUnitsDead())
+        {
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUpgradeState);
+        }
+
         if (player.UnitManager.NoPlayerUnitsWithActionsLeft())
         {
             player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);

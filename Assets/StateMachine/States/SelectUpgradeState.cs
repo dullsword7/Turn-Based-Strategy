@@ -2,15 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SelectUpgradeState : IState
 {
     private PlayerController player;
     private int currentMenuButtonIndex;
 
+    private TMP_Text optionOneDescription;
+    private TMP_Text optionTwoDescription;
+    private TMP_Text optionThreeDescription;
+
+    private List<Skill> skillOptions;
+
     public SelectUpgradeState(PlayerController player)
     {
         this.player = player;
+        skillOptions = new List<Skill>();
 
         InitializeButtonEvents();
     }
@@ -22,6 +30,9 @@ public class SelectUpgradeState : IState
         Color color;
         ColorUtility.TryParseHtmlString(Constants.SELECTED_UNIT_ACTION_UI_BUTTON_COLOR, out color);
         player.SelectUpgradeButtons[currentMenuButtonIndex].GetComponent<Image>().color = color;
+
+        GenerateSkillOptions();
+        SetupSkillOptionText();
     }
     public void Update()
     {
@@ -31,7 +42,7 @@ public class SelectUpgradeState : IState
     {
         Debug.Log("Exiting SelectUpgradeState");
 
-        player.SelectUpgradeScreen.SetActive(true);
+        player.SelectUpgradeScreen.SetActive(false);
 
         Color color;
         ColorUtility.TryParseHtmlString(Constants.DEFAULT_UNIT_ACTION_UI_BUTTON_COLOR, out color);
@@ -97,5 +108,25 @@ public class SelectUpgradeState : IState
     private void ApplyUpgrade()
     {
         Debug.Log("Applying upgrade");
+        skillOptions[currentMenuButtonIndex].ApplySkillEffect(player.UnitManager.playerUnitList);
+        player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+    }
+    private void GenerateSkillOptions()
+    {
+        int numberOfPossibleSkills = player.AllSkills.PossibleSkills.Count;
+        skillOptions.Add(player.AllSkills.PossibleSkills[Random.Range(0, numberOfPossibleSkills - 1)]);
+        skillOptions.Add(player.AllSkills.PossibleSkills[Random.Range(0, numberOfPossibleSkills - 1)]);
+        skillOptions.Add(player.AllSkills.PossibleSkills[Random.Range(0, numberOfPossibleSkills - 1)]);
+    }
+    private void SetupSkillOptionText()
+    {
+        List<GameObject> upgradeButtons = player.SelectUpgradeButtons;
+        for (int i = 0; i < upgradeButtons.Count; i++)
+        {
+            TMP_Text buttonSkillDescription = upgradeButtons[i].GetComponentInChildren<TMP_Text>();
+            string skillName = skillOptions[i].SkillName;
+            string skillDescription = skillOptions[i].SkillDescription;
+            buttonSkillDescription.SetText(skillName + "\n\n\n" + skillDescription);
+        }
     }
 }

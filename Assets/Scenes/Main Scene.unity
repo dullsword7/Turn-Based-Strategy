@@ -1177,7 +1177,6 @@ GameObject:
   - component: {fileID: 257734738}
   - component: {fileID: 257734741}
   - component: {fileID: 257734740}
-  - component: {fileID: 257734739}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1202,22 +1201,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -150.26666, y: -624.14}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &257734739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 257734737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
 --- !u!114 &257734740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1793,7 +1778,6 @@ GameObject:
   - component: {fileID: 313985685}
   - component: {fileID: 313985688}
   - component: {fileID: 313985687}
-  - component: {fileID: 313985686}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1818,22 +1802,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -150.26666, y: -624.14}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &313985686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313985684}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
 --- !u!114 &313985687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4388,7 +4358,7 @@ GameObject:
   - component: {fileID: 786513067}
   - component: {fileID: 786513066}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: SelectUpgradeCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8790,7 +8760,6 @@ GameObject:
   - component: {fileID: 1440689748}
   - component: {fileID: 1440689751}
   - component: {fileID: 1440689750}
-  - component: {fileID: 1440689749}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -8815,22 +8784,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -150.26666, y: -624.14}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1440689749
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1440689747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
 --- !u!114 &1440689750
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13901,7 +13856,7 @@ GameObject:
   - component: {fileID: 2042153738}
   - component: {fileID: 2042153737}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: BattleResultCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14327,7 +14282,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 2093100888}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []

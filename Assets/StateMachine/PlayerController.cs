@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
 
     private StateMachine playerStateMachine;
     private BattleResultHandler battleResultHandler;
+    private AllSkills allSkills;
 
     public PlayerUnit PlayerUnit;
     public StateMachine PlayerStateMachine => playerStateMachine;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
     public GameObject SelectUpgradeScreen => selectUpgradeScreen;
     public List<GameObject> SelectUpgradeButtons => selectUpgradeButtons;
     public BattleResultHandler BattleResultHandler => battleResultHandler;
+    public AllSkills AllSkills => allSkills;
 
     private Camera mainCamera;
     private Vector3 leftBound;
@@ -55,11 +57,12 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        allSkills = new AllSkills();
         // playerStateMachine needs to be placed in Start() so that UnitManager can find all player and enemy objects in Awake() before anything else happens
         playerStateMachine = new StateMachine(this);
         battleResultHandler = new BattleResultHandler(battleResultHolder, attackingUnit, battleResult, unitAttackCount, defendingUnit);
 
-        playerStateMachine.Initialize(playerStateMachine.viewMapState);
+        playerStateMachine.Initialize(playerStateMachine.selectUpgradeState);
     }
 
     // Update is called once per frame
