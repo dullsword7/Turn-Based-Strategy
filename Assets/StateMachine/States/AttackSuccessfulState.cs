@@ -16,15 +16,18 @@ public class AttackSuccessfulState : IState
         {
             player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.selectUpgradeState);
         }
-
-        if (player.UnitManager.NoPlayerUnitsWithActionsLeft())
-        {
-            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);
-        }
         else
         {
-            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+            if (player.UnitManager.NoPlayerUnitsWithActionsLeft())
+            {
+                player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);
+            }
+            else
+            {
+                player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+            }
         }
+
     }
     public void Exit()
     {
