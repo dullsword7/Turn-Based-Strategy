@@ -30,6 +30,24 @@ public class ViewMapState : IState
             player.PlayerUnit?.TurnOffInfo();
         }
 
+        Collider2D col = Physics2D.OverlapPoint(player.transform.position, Constants.MASK_BATTLE_UNIT);
+        if (col != null)
+        {
+            TurnOffPreviousUnitInfo();
+            battleUnit = col.gameObject.GetComponent<BattleUnit>();
+            battleUnit.TurnOnInfo();
+            battleUnit.TurnOnMovementRange();
+
+            if (battleUnit is PlayerUnit)
+            {
+                playerUnit = col.gameObject.GetComponent<PlayerUnit>();
+                player.PlayerUnit = playerUnit;
+                playerUnit.TurnOnMovementRange();
+                playerUnit.TurnOnInfo();
+            }
+            previousBattleUnit = battleUnit;
+        }
+
         foreach (PlayerUnit playerUnit in player.UnitManager.playerUnitList)
         {
             playerUnit.UpdateAttackAndMovementRange(playerUnit.transform.position);
@@ -41,7 +59,7 @@ public class ViewMapState : IState
 
         if (player.UnitManager.NoPlayerUnitsWithActionsLeft())
         {
-            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.enemyBattlePhaseState);
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.playerToEnemyTurnState);
         }
     }
     public void Update()

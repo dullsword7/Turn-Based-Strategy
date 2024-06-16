@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         playerStateMachine = new StateMachine(this);
         battleResultHandler = new BattleResultHandler(battleResultHolder, attackingUnit, battleResult, unitAttackCount, defendingUnit);
 
-        playerStateMachine.Initialize(playerStateMachine.selectUpgradeState);
+        playerStateMachine.Initialize(playerStateMachine.viewMapState);
     }
 
     // Update is called once per frame

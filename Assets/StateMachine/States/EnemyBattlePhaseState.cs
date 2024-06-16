@@ -32,7 +32,7 @@ public class EnemyBattlePhaseState : IState
     {
         if (player.UnitManager.AllPlayerUnitsDead())
         {
-            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.viewMapState);
+            player.PlayerStateMachine.TransitionTo(player.PlayerStateMachine.gameOverState);
         }
         else
         {

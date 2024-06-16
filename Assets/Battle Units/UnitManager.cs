@@ -59,16 +59,17 @@ public class UnitManager : MonoBehaviour
     public void DestroyBattleUnitOnDeath(GameObject gameObject)
     {
         BattleUnit battleUnit = gameObject.GetComponent<BattleUnit>();
-        if (battleUnit is PlayerUnit)
+        if (battleUnit is PlayerUnit playerUnit)
         {
             Debug.Log("Player Unit Dead");
-            playerUnitList.Remove(battleUnit as PlayerUnit);
+            playerUnitList.Remove(playerUnit);
+            playerUnitsWithActionsLeft.Remove(playerUnit);
             if (playerUnitList.Count < 1) gameOver?.Invoke();
         }
-        if (battleUnit is EnemyUnit)
+        if (battleUnit is EnemyUnit enemyUnit)
         {
             Debug.Log("Enemy Unit Dead");
-            enemyUnitList.Remove(battleUnit as EnemyUnit);
+            enemyUnitList.Remove(enemyUnit);
         }
         gameObject.SetActive(false);
     }
