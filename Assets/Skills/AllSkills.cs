@@ -4,18 +4,18 @@ public class AllSkills
 {
     public List<Skill> PossibleSkills;
 
-    private ChangeStatsSkill increaseHealthSkill;
-    private ChangeStatsSkill increaseAttackSkill;
-    private ChangeStatsSkill increaseDefenseSkill;
-    private ChangeStatsSkill increaseSpeedSkill;
+    private ChangeStatsSkillFlatValue increaseHealthSkill;
+    private ChangeStatsSkillFlatValue increaseAttackSkill;
+    private ChangeStatsSkillFlatValue increaseDefenseSkill;
+    private ChangeStatsSkillFlatValue increaseSpeedSkill;
 
     public AllSkills()
     {
         PossibleSkills = new List<Skill>();
-        increaseHealthSkill = new ChangeStatsSkill(10, StatName.Health);
-        increaseAttackSkill = new ChangeStatsSkill(10, StatName.Attack);
-        increaseDefenseSkill = new ChangeStatsSkill(10, StatName.Defense);
-        increaseSpeedSkill = new ChangeStatsSkill(10, StatName.Speed);
+        increaseHealthSkill = new ChangeStatsSkillFlatValue(10, StatName.Health);
+        increaseAttackSkill = new ChangeStatsSkillFlatValue(10, StatName.Attack);
+        increaseDefenseSkill = new ChangeStatsSkillFlatValue(10, StatName.Defense);
+        increaseSpeedSkill = new ChangeStatsSkillFlatValue(10, StatName.Speed);
 
         InitializeSkillList();
     }

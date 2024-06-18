@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class ChangeStatsSkill : PassiveSkill
+public class ChangeStatsSkillFlatValue : PassiveSkill
 {
     private string skillName;
     private string skillDescription;
@@ -8,8 +8,9 @@ public class ChangeStatsSkill : PassiveSkill
     private StatName statName;
     public override string SkillName { get => skillName; set => skillName = value; }
     public override string SkillDescription { get => skillDescription; set => skillDescription = value; }
+    public override bool EquipableSkill { get => false; }
 
-    public ChangeStatsSkill(float statIncrease, StatName statName)
+    public ChangeStatsSkillFlatValue(float statIncrease, StatName statName)
     {
         this.statIncrease = statIncrease;
         this.statName = statName;

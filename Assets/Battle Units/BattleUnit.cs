@@ -29,6 +29,7 @@ public abstract class BattleUnit : MonoBehaviour, IBattleUnit
     public virtual List<Stat> BattleUnitBaseStats { get; set; }
     public virtual Dictionary<StatName, float> BattleUnitStats { get; set; }
     public virtual Dictionary<StatName, float> BattleUnitStatsGrowthRates { get; set; }
+    public virtual List<Skill> CurrentBattleUnitSkillList { get; set; }
 
     public bool TryMovementSucess;
 
